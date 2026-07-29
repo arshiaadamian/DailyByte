@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyByte — Project Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6F8;
+    --surface:#FFFFFF;
+    --border:#E2E5EA;
+    --ink:#12151B;
+    --muted:#5B6472;
+    --blue:#2451E0;
+    --blue-dim:#EAF0FE;
+    --amber:#F2A63D;
+    --amber-dim:#FDF3E2;
+    --green:#1E9E6B;
+    --green-dim:#E8F7F1;
+    --gray-tag:#9AA1AC;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 32px;}
+  h1,h2,h3{font-family:'Space Grotesk',sans-serif;margin:0;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--blue);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{padding:72px 0 64px;}
+  .hero-grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:center;}
+  .hero h1{font-size:56px;font-weight:700;margin:14px 0 18px;}
+  .hero .tagline{font-size:20px;color:var(--ink);font-weight:500;max-width:480px;margin-bottom:14px;}
+  .hero .support{color:var(--muted);font-size:15px;max-width:460px;}
+
+  /* phone notification mockup */
+  .phone-frame{
+    background:#0E1116;
+    border-radius:44px;
+    padding:14px;
+    box-shadow:0 30px 60px -20px rgba(18,21,27,0.35);
+    max-width:300px;
+    margin:0 auto;
+  }
+  .phone-screen{
+    background:linear-gradient(160deg,#3A4A7A 0%,#1B2340 60%,#12151B 100%);
+    border-radius:32px;
+    padding:26px 16px;
+    position:relative;
+    min-height:400px;
+  }
+  .phone-time{color:#fff;text-align:center;font-size:15px;font-weight:600;opacity:0.9;margin-bottom:22px;}
+  .notif-card{
+    background:rgba(255,255,255,0.94);
+    border-radius:18px;
+    padding:14px 14px 15px;
+    box-shadow:0 10px 24px rgba(0,0,0,0.25);
+  }
+  .notif-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .notif-icon{
+    width:20px;height:20px;border-radius:6px;
+    background:var(--amber);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;color:#12151B;
+    flex-shrink:0;
+  }
+  .notif-app{font-size:12px;font-weight:600;color:#333;letter-spacing:0.02em;flex:1;}
+  .notif-app span{text-transform:uppercase;}
+  .notif-time{font-size:11px;color:#8a8f99;}
+  .notif-title{font-size:14px;font-weight:700;color:#12151B;margin-bottom:2px;}
+  .notif-body{font-size:13px;color:#3d424c;}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{padding:56px 0;border-top:1px solid var(--border);}
+  .section-head{margin-bottom:28px;}
+  .section-head h2{font-size:30px;font-weight:700;margin-top:8px;}
+
+  /* ---------- PROBLEM ---------- */
+  .problem-copy{font-size:18px;color:var(--ink);max-width:660px;}
+  .problem-copy b{background:linear-gradient(transparent 60%, var(--amber-dim) 60%);}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .step{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 18px;}
+  .step .num{font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--blue);font-size:13px;margin-bottom:14px;}
+  .step h3{font-size:16px;font-weight:600;margin-bottom:8px;}
+  .step p{font-size:13.5px;color:var(--muted);margin:0;}
+
+  /* ---------- MVP SCOPE ---------- */
+  .scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .scope-card{border-radius:14px;padding:24px 26px;border:1px solid var(--border);}
+  .scope-card.in{background:var(--green-dim);border-color:#c7ead9;}
+  .scope-card.later{background:var(--surface);}
+  .scope-card h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .dot.in{background:var(--green);}
+  .dot.later{background:var(--gray-tag);}
+  .scope-card ul{margin:0;padding-left:20px;font-size:14px;color:var(--ink);}
+  .scope-card.later ul{color:var(--muted);}
+  .scope-card li{margin-bottom:9px;}
+
+  /* ---------- ARCHITECTURE ---------- */
+  .arch-wrap{background:#12151B;border-radius:20px;padding:40px 36px 34px;}
+  .arch-wrap .section-head h2, .arch-wrap .eyebrow{color:#fff;}
+  .arch-wrap .section-head p{color:#9CA6B8;}
+  .arch-note{color:#9CA6B8;font-size:13.5px;margin-top:22px;max-width:600px;}
+
+  /* ---------- TECH STACK ---------- */
+  .stack-row{display:flex;flex-wrap:wrap;gap:10px;}
+  .pill{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;font-weight:500;
+    background:var(--blue-dim);color:var(--blue);
+    border-radius:999px;padding:7px 14px;
+  }
+  .pill.amber{background:var(--amber-dim);color:#9a6a12;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:36px 0 60px;color:var(--gray-tag);font-size:12.5px;}
+
+  @media (max-width:760px){
+    .hero-grid{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr 1fr;}
+    .scope-grid{grid-template-columns:1fr;}
+    .hero h1{font-size:40px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Project overview — working title</div>
+        <h1>DailyByte</h1>
+        <div class="tagline">One small idea a day, on whatever you're trying to learn — delivered like a text, not a textbook.</div>
+        <div class="support">A daily-notification learning app for iPhone, built as a hands-on project to apply real AWS architecture — not just another calorie counter or to-do list.</div>
+      </div>
+      <div>
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="phone-time">9:41</div>
+            <div class="notif-card">
+              <div class="notif-top">
+                <div class="notif-icon">B</div>
+                <div class="notif-app"><span>DailyByte</span></div>
+                <div class="notif-time">now</div>
+              </div>
+              <div class="notif-title">What's a REST API?</div>
+              <div class="notif-body">It's a set of rules that lets your phone ask a server for data — tap to read the 60-second version.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">The gap</div>
+      <h2>Most learning apps want 15 minutes.<br>Most free time is 2.</h2>
+    </div>
+    <div class="problem-copy">
+      Courses and book-summary apps assume you'll sit down and commit. But real learning happens in the gaps — waiting for coffee, standing in line — and <b>nothing meets people there with one specific, well-written idea on the exact topic they actually chose.</b>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">How it works</div>
+      <h2>Four steps, once a day</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Pick your topics</h3>
+        <p>Choose what you want to get sharper at — HTTP, AWS, cooking, anything on the list.</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>Get a daily nudge</h3>
+        <p>Once a day, a notification arrives with one small, specific idea from your topic.</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>Read it in a minute</h3>
+        <p>Tap it open: a short, plain-English explanation, freshly written each day.</p>
+      </div>
+      <div class="step">
+        <div class="num">04</div>
+        <h3>Go deeper if you want</h3>
+        <p>A link to a real source sits right there, for whenever two minutes turns into twenty.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MVP SCOPE -->
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">MVP scope</div>
+      <h2>What actually ships first</h2>
+    </div>
+    <div class="scope-grid">
+      <div class="scope-card in">
+        <h3><span class="dot in"></span>Ships in v1</h3>
+        <ul>
+          <li>Sign in with email or Apple ID</li>
+          <li>Pick 1–3 topics from a starting list</li>
+          <li>One daily notification per topic</li>
+          <li>A short written explanation for each concept</li>
+          <li>A link to a real source to learn more</li>
+          <li>A simple history of past days</li>
+          <li>Change your topics or notification time anytime</li>
+        </ul>
+      </div>
+      <div class="scope-card later">
+        <h3><span class="dot later"></span>Comes later, on purpose</h3>
+        <ul>
+          <li>Quizzes and spaced-repetition review</li>
+          <li>Streaks and achievement badges</li>
+          <li>Sharing, friends, or a leaderboard</li>
+          <li>Submitting your own custom topics</li>
+          <li>Android version</li>
+          <li>A web dashboard</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section>
+    <div class="arch-wrap">
+      <div class="section-head">
+        <div class="eyebrow">Under the hood</div>
+        <h2>What happens every morning</h2>
+      </div>
+
+      <svg viewBox="0 0 900 290" width="100%" style="display:block;">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#5B6472" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- arrows between nodes -->
+        <line x1="170" y1="150" x2="200" y2="150" stroke="#3A4152" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="395" y1="150" x2="425" y2="150" stroke="#3A4152" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="580" y1="150" x2="610" y2="150" stroke="#3A4152" stroke-width="2" marker-end="url(#arr)"/>
+        <line x1="765" y1="150" x2="795" y2="150" stroke="#3A4152" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- node 1: EventBridge -->
+        <g>
+          <rect x="20" y="110" width="150" height="80" rx="14" fill="#1B2030" stroke="#2E3546"/>
+          <text x="95" y="145" text-anchor="middle" fill="#fff" font-family="Space Grotesk" font-weight="600" font-size="14">7:00am, daily</text>
+          <text x="95" y="165" text-anchor="middle" fill="#8B93A3" font-family="JetBrains Mono" font-size="11">EventBridge</text>
+        </g>
+
+        <!-- node 2: Lambda + Bedrock -->
+        <g>
+          <rect x="205" y="100" width="190" height="100" rx="14" fill="#182A52" stroke="#2451E0"/>
+          <text x="300" y="135" text-anchor="middle" fill="#fff" font-family="Space Grotesk" font-weight="600" font-size="14">Claude drafts</text>
+          <text x="300" y="153" text-anchor="middle" fill="#fff" font-family="Space Grotesk" font-weight="600" font-size="14">today's concept</text>
+          <text x="300" y="177" text-anchor="middle" fill="#8FAEFF" font-family="JetBrains Mono" font-size="11">Lambda + Bedrock</text>
+        </g>
+
+        <!-- node 3: DynamoDB -->
+        <g>
+          <rect x="430" y="110" width="150" height="80" rx="14" fill="#1B2030" stroke="#2E3546"/>
+          <text x="505" y="145" text-anchor="middle" fill="#fff" font-family="Space Grotesk" font-weight="600" font-size="14">Saved</text>
+          <text x="505" y="165" text-anchor="middle" fill="#8B93A3" font-family="JetBrains Mono" font-size="11">DynamoDB</text>
+        </g>
+
+        <!-- node 4: SNS -->
+        <g>
+          <rect x="615" y="100" width="150" height="100" rx="14" fill="#3A2C10" stroke="#F2A63D"/>
+          <text x="690" y="135" text-anchor="middle" fill="#fff" font-family="Space Grotesk" font-weight="600" font-size="14">Notification</text>
+          <text x="690" y="153" text-anchor="middle" fill="#fff" font-family="Space Grotesk" font-weight="600" font-size="14">sent</text>
+          <text x="690" y="177" text-anchor="middle" fill="#F2C077" font-family="JetBrains Mono" font-size="11">Amazon SNS</text>
+        </g>
+
+        <!-- node 5: iPhone -->
+        <g>
+          <rect x="800" y="110" width="80" height="80" rx="14" fill="#1B2030" stroke="#2E3546"/>
+          <text x="840" y="145" text-anchor="middle" fill="#fff" font-family="Space Grotesk" font-weight="600" font-size="13">Your</text>
+          <text x="840" y="163" text-anchor="middle" fill="#fff" font-family="Space Grotesk" font-weight="600" font-size="13">iPhone</text>
+        </g>
+
+        <!-- caption -->
+        <text x="450" y="235" text-anchor="middle" fill="#6B7382" font-family="Inter" font-size="12.5">Whenever you open the app instead — checking history, changing settings —</text>
+        <text x="450" y="253" text-anchor="middle" fill="#6B7382" font-family="Inter" font-size="12.5">that's API Gateway + Lambda, behind a Cognito sign-in.</text>
+      </svg>
+
+      <div class="arch-note">The whole loop above runs without anyone touching a server. AWS wakes itself up, writes the content, saves it, and pushes it — the same pattern used by real production apps, just sized for one developer to run and maintain.</div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section>
+    <div class="section-head">
+      <div class="eyebrow">Tech stack</div>
+      <h2>What it's actually built with</h2>
+    </div>
+    <div class="stack-row">
+      <div class="pill">React Native — iPhone app</div>
+      <div class="pill">API Gateway — REST API</div>
+      <div class="pill">AWS Lambda — backend logic</div>
+      <div class="pill amber">Amazon Bedrock — Claude, for content</div>
+      <div class="pill">Amazon DynamoDB — data</div>
+      <div class="pill amber">Amazon SNS — push notifications</div>
+      <div class="pill">Amazon Cognito — accounts</div>
+      <div class="pill">Amazon EventBridge — daily scheduling</div>
+    </div>
+  </section>
+
+  <footer>
+    "DailyByte" is a working title, not a final name. This document describes the MVP only — the smallest version worth building and using every day.
+  </footer>
+
+</div>
+
+</body>
+</html>
