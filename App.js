@@ -1,20 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { StatusBar } from 'expo-status-bar'
+import { SafeAreaView, StyleSheet, View } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
+import { useFonts, Newsreader_400Regular, Newsreader_700Bold } from '@expo-google-fonts/newsreader';
+import ByteCard from "./components/ByteCard";
+import todaysData from "./data/todaysByte";
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [fontsLoaded] = useFonts({ Newsreader_400Regular, Newsreader_700Bold });
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>This is Daily Byte1</Text>
-      <StatusBar style="auto" />
+    // <SafeAreaView style={styles.root}>
+    <View style={styles.root}>
+      <ByteCard data={todaysData} />
+      <StatusBar style="auto"/>
     </View>
+    // </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  root: { flex: 1},
 });
