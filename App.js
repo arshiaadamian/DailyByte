@@ -29,7 +29,7 @@ export default function App() {
     <View style={styles.root}>
       <StatusBar style="auto"/>
       <HomeScreen />
-      <NavBar />
+      <NavBar activeTab={activeTab} setActiveTab={setActiveTab} />
     </View>
   );
 }

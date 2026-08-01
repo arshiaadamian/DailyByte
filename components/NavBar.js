@@ -23,14 +23,11 @@ const TABS =
 ]
 
 
-export default function NavBar()
+export default function NavBar({activeTab, setActiveTab})
 {
-    const [activeTab, setActiveTab] = useState("home");
-
     return (
         <View style={styles.navbar}>
             {TABS.map((tab) => {
-                
                 const tabKey = tab.key;
                 const isActive = tabKey === activeTab;
 
