@@ -1,14 +1,7 @@
 import { StyleSheet } from 'react-native';
 
-// App and ByteCard styles
+//ByteCard styles
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E1DED3',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
   card: {
     backgroundColor: '#C6BDAB',
     borderRadius: 16,

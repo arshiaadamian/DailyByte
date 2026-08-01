@@ -1,5 +1,4 @@
 import { Text, View, Pressable, Linking } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import styles from '../style/ByteCard.styles';
 
 export default function ByteCard( {data} ) {

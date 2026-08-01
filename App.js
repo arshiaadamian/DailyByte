@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Newsreader_400Regular, Newsreader_700Bold } from '@expo-google-fonts/newsreader';
-import ByteCard from "./components/ByteCard";
-import todaysData from "./data/todaysByte";
+import HomeScreen from './screens/Home'
 import NavBar from "./components/NavBar";
 
 SplashScreen.preventAutoHideAsync();
@@ -22,14 +21,16 @@ export default function App() {
     return null;
   }
 
+
+  // isActive state, the state that is passed down to the navbar, gets updated from there and gets passed back up.
+  const [activeTab, setActiveTab] = useState("home");
+
   return (
-    // <SafeAreaView style={styles.root}>
     <View style={styles.root}>
-      <ByteCard data={todaysData} />
       <StatusBar style="auto"/>
+      <HomeScreen />
       <NavBar />
     </View>
-    // </SafeAreaView>
   );
 }
 

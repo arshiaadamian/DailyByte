@@ -17,8 +17,8 @@ const TABS =
         icon: "home"
     },
     {
-        key: "person",
-        icon: "person"
+        key: "history",
+        icon: "time"
     }
 ]
 
