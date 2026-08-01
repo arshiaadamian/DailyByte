@@ -59,12 +59,6 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 4,
   },
-  NavBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0
-  }
 });
 
 export default styles;

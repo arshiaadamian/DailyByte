@@ -1,9 +1,6 @@
 import { Text, View, Pressable, Linking } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import styles from '../style/App.styles';
-import NavBar from "./NavBar";
-import NavBarStyles from "../style/NavBar.styles"
-
+import styles from '../style/ByteCard.styles';
 
 export default function ByteCard( {data} ) {
     return (
@@ -15,9 +12,6 @@ export default function ByteCard( {data} ) {
                 <Pressable onPress={() => Linking.openURL(data.sourceURL)} style={({ pressed }) => pressed && { opacity: 0.5 }}>
                     <Text style={styles.source}>Read more →</Text>
                 </Pressable>
-            </View>
-            <View style={styles.NavBar}>
-                <NavBar/>
             </View>
         </View>
     );
