@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { View, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "../style/NavBar.styles";
