@@ -41,7 +41,7 @@ export default function NavBar()
                         onPress={() => setActiveTab(tabKey)}
                     >
                         <Ionicons 
-                            name={tabKey}
+                            name={isActive? tab.icon : `${tab.icon}-outline`}
                             size={24}
                             color={isActive ? ACTIVE_COLOR : INACTIVE_COLOR}
                         />
