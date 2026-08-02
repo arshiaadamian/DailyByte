@@ -1,5 +1,5 @@
 import {View, Text} from 'react-native';
-import styles from '../style/History.Styles';
+import styles from '../style/History.styles';
 
 export default function HistoryScreen(){
     return(

@@ -8,6 +8,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20,
   },
+  message: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 20,
+    color: '#5A5546',
+  }
 });
 
 export default styles;
