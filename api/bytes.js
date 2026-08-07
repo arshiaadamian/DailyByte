@@ -1,5 +1,5 @@
-const TODAY_URL = 'https://api.npoint.io/de4404dc63b45a26470e';
-const HISTORY_URL = 'https://api.npoint.io/9a866cce23d298a0b2b8';
+const TODAY_URL = 'https://gr4o73e1ca.execute-api.ca-west-1.amazonaws.com/bytes/today';
+const HISTORY_URL = 'https://gr4o73e1ca.execute-api.ca-west-1.amazonaws.com/bytes/history';
 
 export async function fetchTodaysByte() 
 {
