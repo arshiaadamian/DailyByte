@@ -9,6 +9,11 @@ export async function fetchTodaysByte()
         throw new Error(`/bytes/today request faield with status ${response.status}`);
     }
 
+    if (response.status === 202)
+    {
+        throw new Error("/bytes/today - No bytes exist yet");
+    }
+
     // parse json object into JS object
     return response.json();
 }
