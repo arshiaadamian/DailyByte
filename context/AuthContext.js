@@ -6,7 +6,7 @@ const AuthContext = createContext(null); // auth context variable, called an emp
 // children is the component from the parent 
 export function AuthProvider({ children }) // children is a special prop, it is whatever JSX you nest inside the tags in App.js (parent)
 {
-    const [status, setStatus] = setState('checking');
+    const [status, setStatus] = useState('checking');
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -60,8 +60,7 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         return session.tokens?.idToken?.toString();
     }
 
-    return 
-    (
+    return (
         <AuthContext.Provider value={{status, user, signIn, signOut, getIdToken}} >
             {children}
         </AuthContext.Provider>
