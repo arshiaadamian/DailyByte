@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Newsreader_400Regular, Newsreader_700Bold } from '@expo-google-fonts/newsreader';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import SignInScreen from './screens/SignIn';
+import SignUpScreen from './screens/SignUp';
 
 // import screens
 import HomeScreen from './screens/Home';
@@ -44,6 +45,15 @@ function AppContent() {
   const { status } = useAuth();
   // isActive state, the state that is passed down to the navbar, gets updated from there and gets passed back up.
   const [activeTab, setActiveTab] = useState("home");
+  const [authScreen, setAuthScreen] = useState("signIn");
+
+  // reset back to the sign-in screen so a later sign-out doesn't land on sign-up
+  useEffect(() => {
+    if (status === 'signedIn')
+    {
+      setAuthScreen('signIn');
+    }
+  }, [status]);
 
   const screen = {
     "home": <HomeScreen />,
@@ -62,7 +72,11 @@ function AppContent() {
 
   if (status === 'signedOut')
   {
-    return <SignInScreen />;
+    if (authScreen === 'signUp')
+    {
+      return <SignUpScreen onBackToSignIn={() => setAuthScreen('signIn')} />;
+    }
+    return <SignInScreen onSignUpPress={() => setAuthScreen('signUp')} />;
   }
 
   const activeScreen = screen[activeTab]

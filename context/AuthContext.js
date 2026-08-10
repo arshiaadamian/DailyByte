@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getCurrentUser, signIn as amplifySignIn, signOut as amplifySignOut, fetchAuthSession } from 'aws-amplify/auth';
+import { getCurrentUser, signIn as amplifySignIn, signOut as amplifySignOut, signUp as amplifySignUp,fetchAuthSession, confirmSignUp as amplifyConfirmSignUp, resendSignUpCode as amplifyResendCode, autoSignIn as amplifyAutoSignIn } from 'aws-amplify/auth';
 
 const AuthContext = createContext(null); // auth context variable, called an empty channel
 
@@ -54,6 +54,29 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         setStatus('signedOut');
     }
 
+    async function signUp(email, password)
+    {
+        await amplifySignUp({
+             username: email,
+             password,
+             options: { userAttributes: {email}, autoSignIn: true }
+        });
+    }
+
+    async function confirmSignUp(email, code)
+    {
+        await amplifyConfirmSignUp( {username: email, confirmationCode: code});
+        await amplifyAutoSignIn();
+        const currentUser = await getCurrentUser();
+        setUser(currentUser);
+        setStatus('signedIn');
+    }
+
+    async function resendCode(email)
+    {
+        await amplifyResendCode( {username: email });
+    }
+
     async function getIdToken()
     {
         const session = await fetchAuthSession();
@@ -61,7 +84,7 @@ export function AuthProvider({ children }) // children is a special prop, it is 
     }
 
     return (
-        <AuthContext.Provider value={{status, user, signIn, signOut, getIdToken}} >
+        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken}} >
             {children}
         </AuthContext.Provider>
     );

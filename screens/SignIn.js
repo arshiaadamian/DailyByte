@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import styles from '../style/SignIn.styles';
 
 
-
-export default function SignInScreen() {
+export default function SignInScreen({ onSignUpPress }) {
 
     const { signIn } = useAuth();
 
@@ -13,6 +13,7 @@ export default function SignInScreen() {
     const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     async function handleSignIn()
     {
@@ -58,16 +59,29 @@ export default function SignInScreen() {
                 />
 
                 <Text style={styles.label}>Password</Text>
-                <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="••••••••"
-                placeholderTextColor="#A39C8A"
-                secureTextEntry
-                autoCapitalize="none"
-                textContentType="password"
-                />
+                <View style={styles.passwordRow}>
+                    <TextInput
+                    style={[styles.input, styles.passwordInput]}
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder="••••••••"
+                    placeholderTextColor="#A39C8A"
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    textContentType="password"
+                    />
+                    <Pressable
+                        onPress={() => setShowPassword((v) => !v)}
+                        style={styles.eyeButton}
+                        hitSlop={8}
+                    >
+                        <Ionicons
+                            name={showPassword ? 'eye-off' : 'eye'}
+                            size={20}
+                            color="#5A5546"
+                        />
+                    </Pressable>
+                </View>
 
                 {error && <Text style={styles.error}>{error}</Text>}
 
@@ -83,6 +97,15 @@ export default function SignInScreen() {
                 {submitting
                     ? <ActivityIndicator color="#E1DED3" />
                     : <Text style={styles.buttonText}>Sign in</Text>}
+                </Pressable>
+                <Pressable
+                    onPress={onSignUpPress}
+                    style={({ pressed }) => [
+                        styles.resendButton,
+                        pressed && styles.resendButtonPressed,
+                    ]}
+                >
+                    <Text style={styles.resendButtonText}>Don't have an account? Sign up</Text>
                 </Pressable>
             </View>
         </KeyboardAvoidingView>
