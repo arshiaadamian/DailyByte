@@ -97,7 +97,7 @@ export function useAuth()
     {
         throw new Error('useAuth must be used inside an AuthProvider');
     }
-
+    
     return context;
 }
 

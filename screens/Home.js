@@ -11,6 +11,9 @@ import styles from '../style/Home.styles';
 // fetch data
 import { fetchTodaysByte } from '../api/bytes';
 
+// context
+import { useAuth } from '../context/AuthContext';
+
 
 export default function HomeScreen() {
 
@@ -18,6 +21,9 @@ export default function HomeScreen() {
     const [byte, setByte] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { getIdToken } = useAuth();
+
 
     useEffect(() => {
         let cancelled = false;
@@ -28,7 +34,9 @@ export default function HomeScreen() {
             {
                 setLoading(true);
                 setError(null);
-                const data = await fetchTodaysByte();
+                const token = await getIdToken();
+                // console.log('token is: ', token);
+                const data = await fetchTodaysByte(token);
                 
                 if(!cancelled)
                 {

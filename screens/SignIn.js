@@ -14,9 +14,12 @@ export default function SignInScreen({ onSignUpPress }) {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
+    const { getIdToken } = useAuth();
 
     async function handleSignIn()
     {
+        
+        
         if (!email.trim() || !password)
         {
             setError("Please enter your email and password");
@@ -28,6 +31,8 @@ export default function SignInScreen({ onSignUpPress }) {
             setSubmitting(true);
             setError(null);
             await signIn(email.trim(), password);
+            // const token = await getIdToken();
+            // console.log("token is: ", token);
         }
         catch (err)
         {
@@ -35,6 +40,8 @@ export default function SignInScreen({ onSignUpPress }) {
             setSubmitting(false);
         }
     }
+
+    
 
     return (
         <KeyboardAvoidingView

@@ -3,6 +3,7 @@ import styles from '../style/History.styles';
 import { fetchHistory } from '../api/bytes';
 import { useEffect, useState } from 'react';
 import ByteCard from '../components/ByteCard';
+import { useAuth } from '../context/AuthContext';
 
 export default function HistoryScreen(){
 
@@ -10,6 +11,8 @@ export default function HistoryScreen(){
     const [bytes, setBytes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const { getIdToken } = useAuth();
 
     useEffect(() => {
         let cancelled = false;
@@ -20,8 +23,9 @@ export default function HistoryScreen(){
             {
                 setLoading(true);
                 setError(null);
-                
-                const data = await fetchHistory();
+                const token = await getIdToken();
+                // console.log('token is: ',token);
+                const data = await fetchHistory(token);
 
                 if(cancelled === false)
                 {
