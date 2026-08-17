@@ -15,6 +15,8 @@ export default function SignUpScreen({ onBackToSignIn })
     const [error, setError] = useState(null);
     const [displayCodeInput, setDisplayCodeInput] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     async function handleSignUp()
     {
@@ -28,9 +30,19 @@ export default function SignUpScreen({ onBackToSignIn })
         {
             setSubmitting(true);
             setError(null);
-            await signUp(email, password);
-            setSubmitting(false);
-            setDisplayCodeInput(true);
+            if (password === confirmPassword)
+            {
+                await signUp(email.trim(), password);
+                setSubmitting(false);
+                setDisplayCodeInput(true);
+            }
+            else
+            {
+                setError("Passwords have to match.");
+                setSubmitting(false);
+                setDisplayCodeInput(false);
+            }
+            
         }
         catch (err)
         {
@@ -124,6 +136,31 @@ export default function SignUpScreen({ onBackToSignIn })
                             >
                                 <Ionicons
                                     name={showPassword ? 'eye-off' : 'eye'}
+                                    size={20}
+                                    color="#5A5546"
+                                />
+                            </Pressable>
+                        </View>
+
+                        <Text style={styles.label}>Confrim Password</Text>
+                        <View style={styles.passwordRow}>
+                            <TextInput
+                                style={[styles.input, styles.passwordInput]}
+                                value={confirmPassword}
+                                onChangeText={setConfirmPassword}
+                                placeholder="••••••••"
+                                placeholderTextColor="#A39C8A"
+                                secureTextEntry={!showConfirmPassword}
+                                autoCapitalize="none"
+                                textContentType="newPassword"
+                            />
+                            <Pressable
+                                onPress={() => setShowConfirmPassword((v) => !v)}
+                                style={styles.eyeButton}
+                                hitSlop={8}
+                            >
+                                <Ionicons
+                                    name={showConfirmPassword ? 'eye-off' : 'eye'}
                                     size={20}
                                     color="#5A5546"
                                 />
