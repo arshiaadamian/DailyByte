@@ -3,6 +3,7 @@ const API_BASE = 'https://gr4o73e1ca.execute-api.ca-west-1.amazonaws.com'
 const TODAY_URL = `${API_BASE}/bytes/today`;
 const HISTORY_URL = `${API_BASE}/bytes/history`;
 const GENERATE_SINGLE_BYTE = `${API_BASE}/bytes/generate`;
+const UPDATE_PREFERENCES = `${API_BASE}/bytes/preferences`;
 
 export async function fetchTodaysByte(token) 
 {
