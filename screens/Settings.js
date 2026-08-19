@@ -1,15 +1,51 @@
-import {View, Text, Pressable} from 'react-native';
+import {View, Text, Pressable, TextInput} from 'react-native';
 import styles from '../style/Settings.styles';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
+import { Dropdown } from 'react-native-element-dropdown';
+
+
+// update preference API
+import { updatePreferences } from '../api/bytes';
 
 export default function SettingsScreen()
 {
 
-    const { signOut, user } = useAuth();
+    const { signOut, user, getIdToken } = useAuth();
 
     const [error, setError] = useState(null);
+    const [preferenceError, setPreferenceError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    
+    // update preferences
+    const [topic, setTopic] = useState("");
+    const [bytesPerDay, setBytesPerDay] = useState("");
+
+    const topics = [
+        { label: "Cooking & Kitchen Skills", value: "Cooking & Kitchen Skills" },
+        { label: "Space & Astronomy", value: "Space & Astronomy" },
+        { label: "Personal Finance", value: "Personal Finance" },
+        { label: "World History", value: "World History" },
+        { label: "Spanish Vocabulary", value: "Spanish Vocabulary" },
+        { label: "English Vocabulary", value: "English Vocabulary" },
+        { label: "Psychology", value: "Psychology" },
+        { label: "Health & Nutrition", value: "Health & Nutrition" },
+        { label: "Music Theory", value: "Music Theory" },
+        { label: "Photography", value: "Photography" },
+        { label: "HTTP & Web Protocols", value: "HTTP & Web Protocols" },
+        { label: "AWS Cloud Services", value: "AWS Cloud Services" },
+        { label: "Philosophy", value: "Philosophy" },
+        { label: "Chess Strategy", value: "Chess Strategy" },
+        { label: "Gardening", value: "Gardening" }
+    ];
+
+    const bytesOptions = [
+        { label: "1 byte per day", value: 1 },
+        { label: "2 bytes per day", value: 2 },
+        { label: "3 bytes per day", value: 3 }
+    ];
+
 
     async function handleSignOut()
     {
@@ -23,6 +59,39 @@ export default function SettingsScreen()
         {
             setSubmitting(false);
             setError(err.message ?? 'Could not sign out');
+        }
+    }
+
+    async function handleUpdatePreferences()
+    {
+        if (!topic && !bytesPerDay)
+        {
+            setError("Pick a topic or bytes per day first");
+            return;
+        }
+
+        const payload = {};
+        
+        if (topic)
+        {
+            payload.topic = topic;
+        }
+
+        if (bytesPerDay)
+        {
+            payload.bytesPerDay = bytesPerDay;
+        }
+
+        try
+        {
+            setError(null);
+            const token = await getIdToken();
+            await updatePreferences(token, payload);
+            setSuccessMessage("Successfully updated your preferences");
+        }
+        catch (err)
+        {
+            setPreferenceError(err.message ?? "Could not save preferences");
         }
     }
 
@@ -50,6 +119,61 @@ export default function SettingsScreen()
                     {submitting ? 'Signing out…' : 'Sign out'}
                 </Text>
             </Pressable>
+
+            <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Preferences</Text>
+                <View>
+                    <View style={styles.fieldGroup}>
+                        <Text style={styles.fieldLabel}>Topic</Text>
+                        <Dropdown
+                            style={styles.dropdown}
+                            containerStyle={styles.dropdownContainer}
+                            placeholderStyle={styles.dropdownPlaceholder}
+                            selectedTextStyle={styles.dropdownSelectedText}
+                            itemTextStyle={styles.dropdownItemText}
+                            activeColor={styles.card.backgroundColor}
+                            data={topics}
+                            labelField="label"
+                            valueField="value"
+                            value={topic}
+                            placeholder="Choose a topic"
+                            onChange={item => setTopic(item.value)}
+                        />
+                    </View>
+
+                    <View style={styles.fieldGroup}>
+                        <Text style={styles.fieldLabel}>Bytes Per Day</Text>
+                        <Dropdown
+                            style={styles.dropdown}
+                            containerStyle={styles.dropdownContainer}
+                            placeholderStyle={styles.dropdownPlaceholder}
+                            selectedTextStyle={styles.dropdownSelectedText}
+                            itemTextStyle={styles.dropdownItemText}
+                            activeColor={styles.card.backgroundColor}
+                            data={bytesOptions}
+                            labelField="label"
+                            valueField="value"
+                            value={bytesPerDay}
+                            placeholder="How many per day?"
+                            onChange={item => setBytesPerDay(item.value)}
+                        />
+                    </View>
+                </View>
+
+                <Pressable
+                    onPress={handleUpdatePreferences}
+                    style={({ pressed }) => [
+                        styles.saveButton,
+                        pressed && styles.buttonPressed,
+                    ]}
+                >
+                    <Text style={styles.saveButtonText}>Save Preferences</Text>
+                </Pressable>
+
+                {successMessage && <Text style={styles.successMessage}>{successMessage}</Text>}
+                {preferenceError && <Text style={styles.preferenceError}>{preferenceError}</Text>}
+
+            </View>
         </View>
     )
 }
