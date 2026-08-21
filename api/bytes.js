@@ -3,18 +3,18 @@ const API_BASE = 'https://gr4o73e1ca.execute-api.ca-west-1.amazonaws.com'
 const TODAY_URL = `${API_BASE}/bytes/today`;
 const HISTORY_URL = `${API_BASE}/bytes/history`;
 const GENERATE_SINGLE_BYTE = `${API_BASE}/bytes/generate`;
-const UPDATE_PREFERENCES = `${API_BASE}/bytes/preferences`;
+const UPDATE_PREFERENCES = `${API_BASE}/user/preferences`;
+const USER_INFORMATION = `${API_BASE}/user/information`;
 
-export async function fetchTodaysByte(token) 
+export async function getUserInformation(token)
 {
-    const response = await fetch(TODAY_URL,
-        {
-            method: 'GET',
-            headers: {
-                'Authorization' : `Bearer ${token}`
-            }
+    const response = await fetch(USER_INFORMATION, {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
         }
-    );
+    });
+
     if (!response.ok)
     {
         const detail = await response.text();
@@ -22,7 +22,6 @@ export async function fetchTodaysByte(token)
         throw new Error(`${message}`);
     }
 
-    // parse json object into JS object
     return response.json();
 }
 
@@ -71,6 +70,27 @@ export async function generateNewByte(token)
         const detail = await response.text();
         const message = JSON.parse(detail).message;
         throw new Error(`Error, status: ${response.status}, with message: ${message}`);
+    }
+
+    // parse json object into JS object
+    return response.json();
+}
+
+export async function fetchTodaysByte(token) 
+{
+    const response = await fetch(TODAY_URL,
+        {
+            method: 'GET',
+            headers: {
+                'Authorization' : `Bearer ${token}`
+            }
+        }
+    );
+    if (!response.ok)
+    {
+        const detail = await response.text();
+        const message = JSON.parse(detail).message;
+        throw new Error(`${message}`);
     }
 
     // parse json object into JS object

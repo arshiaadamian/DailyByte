@@ -1,12 +1,12 @@
-import {View, Text, Pressable, TextInput} from 'react-native';
+import {View, Text, Pressable, TextInput, ActivityIndicator} from 'react-native';
 import styles from '../style/Settings.styles';
 import { useAuth } from '../context/AuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
 
 
 // update preference API
-import { updatePreferences } from '../api/bytes';
+import { updatePreferences, getUserInformation } from '../api/bytes';
 
 export default function SettingsScreen()
 {
@@ -17,10 +17,11 @@ export default function SettingsScreen()
     const [preferenceError, setPreferenceError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [loading, setLoading] = useState(true);
     
     // update preferences
-    const [topic, setTopic] = useState("");
-    const [bytesPerDay, setBytesPerDay] = useState("");
+    const [topic, setTopic] = useState(null);
+    const [bytesPerDay, setBytesPerDay] = useState(null);
 
     const topics = [
         { label: "Cooking & Kitchen Skills", value: "Cooking & Kitchen Skills" },
@@ -86,6 +87,7 @@ export default function SettingsScreen()
         {
             setError(null);
             const token = await getIdToken();
+            // console.log("token is: ", token);
             await updatePreferences(token, payload);
             setSuccessMessage("Successfully updated your preferences");
         }
@@ -93,6 +95,55 @@ export default function SettingsScreen()
         {
             setPreferenceError(err.message ?? "Could not save preferences");
         }
+    }
+
+    useEffect(() => {
+        let cancelled = false;
+
+        async function getInformation()
+        {
+            try 
+            {
+                setLoading(true);
+                setError(null);
+                const token = await getIdToken();
+                const data = await getUserInformation(token);
+                console.log(data);
+
+                if (!cancelled)
+                {
+                    setTopic(data.message.topic);
+                    setBytesPerDay(data.message.bytesPerDay);
+                }
+            }
+            catch (err)
+            {
+                if (!cancelled)
+                {
+                    setError(err.message);
+                }           
+            }
+            finally
+            {
+                if (!cancelled)
+                {
+                    setLoading(false);
+                }
+            }
+        }
+
+        getInformation();
+        return () => { cancelled = true }
+
+    }, []);
+
+    if (loading)
+    {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#816148" />
+            </View>
+        );
     }
 
     return(
