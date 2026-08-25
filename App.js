@@ -6,6 +6,7 @@ import { useFonts, Newsreader_400Regular, Newsreader_700Bold } from '@expo-googl
 import { AuthProvider, useAuth } from './context/AuthContext';
 import SignInScreen from './screens/SignIn';
 import SignUpScreen from './screens/SignUp';
+import ResetPasswordScreen from './screens/ResetPassword';
 
 // import screens
 import HomeScreen from './screens/Home';
@@ -76,7 +77,14 @@ function AppContent() {
     {
       return <SignUpScreen onBackToSignIn={() => setAuthScreen('signIn')} />;
     }
-    return <SignInScreen onSignUpPress={() => setAuthScreen('signUp')} />;
+    else if (authScreen === 'resetPassword')
+    {
+      return <ResetPasswordScreen onSignInPress={() => setAuthScreen('signIn')} />;
+    }
+    else
+    {
+      return <SignInScreen onSignUpPress={() => setAuthScreen('signUp')} onResetPress={() => setAuthScreen('resetPassword')} />;
+    }
   }
 
   const activeScreen = screen[activeTab]

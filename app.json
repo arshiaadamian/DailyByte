@@ -9,7 +9,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.dailybyte-app"
+      "bundleIdentifier": "com.arshiaadamian.dailybyte-app"
     },
     "android": {
       "adaptiveIcon": {

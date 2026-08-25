@@ -5,16 +5,15 @@ import { useAuth } from '../context/AuthContext';
 import styles from '../style/SignIn.styles';
 
 
-export default function SignInScreen({ onSignUpPress }) {
+export default function SignInScreen({ onSignUpPress, onResetPress }) {
 
-    const { signIn } = useAuth();
+    const { signIn, getIdToken } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
-    const { getIdToken } = useAuth();
 
     async function handleSignIn()
     {
@@ -40,8 +39,6 @@ export default function SignInScreen({ onSignUpPress }) {
             setSubmitting(false);
         }
     }
-
-    
 
     return (
         <KeyboardAvoidingView
@@ -114,6 +111,19 @@ export default function SignInScreen({ onSignUpPress }) {
                 >
                     <Text style={styles.resendButtonText}>Don't have an account? Sign up</Text>
                 </Pressable>
+
+                
+                <Pressable
+                    onPress={onResetPress}
+                    style={({ pressed }) => [
+                        styles.resendButton,
+                        pressed && styles.resendButtonPressed,
+                    ]}
+                >
+                    <Text style={styles.resendButtonText}>Reset Password</Text>
+                </Pressable>
+
+
             </View>
         </KeyboardAvoidingView>
     );

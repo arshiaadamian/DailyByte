@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getCurrentUser, signIn as amplifySignIn, signOut as amplifySignOut, signUp as amplifySignUp,fetchAuthSession, confirmSignUp as amplifyConfirmSignUp, resendSignUpCode as amplifyResendCode, autoSignIn as amplifyAutoSignIn } from 'aws-amplify/auth';
+import { getCurrentUser, signIn as amplifySignIn, signOut as amplifySignOut, signUp as amplifySignUp,fetchAuthSession, confirmSignUp as amplifyConfirmSignUp, resendSignUpCode as amplifyResendCode, autoSignIn as amplifyAutoSignIn, resetPassword as amplifyResetPassword, confirmResetPassword as amplifyConfirmResetPassword } from 'aws-amplify/auth';
 
 const AuthContext = createContext(null); // auth context variable, called an empty channel
 
@@ -77,6 +77,30 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         await amplifyResendCode( {username: email });
     }
 
+    async function resetPassword(email)
+    {
+        try 
+        {
+            await amplifyResetPassword({ username: email });
+        }
+        catch (err)
+        {
+            console.log(err);
+        }
+    }
+
+    async function confirmResetPassword(email, confirmationCode, newPassword)
+    {
+        try 
+        {
+            await amplifyConfirmResetPassword({ username: email, confirmationCode: confirmationCode, newPassword: newPassword});
+        }
+        catch (err)
+        {
+            console.log(err);
+        }
+    }
+
     async function getIdToken()
     {
         const session = await fetchAuthSession();
@@ -84,7 +108,7 @@ export function AuthProvider({ children }) // children is a special prop, it is 
     }
 
     return (
-        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken}} >
+        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken, resetPassword, confirmResetPassword}} >
             {children}
         </AuthContext.Provider>
     );

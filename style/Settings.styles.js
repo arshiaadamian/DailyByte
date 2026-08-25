@@ -22,7 +22,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#C6BDAB',
     borderRadius: 16,
     padding: 20,
-    marginBottom: 32,
+    marginTop: 'auto',
+    marginBottom: 12,
   },
   label: {
     fontFamily: 'Newsreader_400Regular',
@@ -40,6 +41,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#B3261E',
     marginBottom: 16,
+  },
+  signOutArea: {
+    marginTop: 0,
   },
   button: {
     backgroundColor: '#816148',

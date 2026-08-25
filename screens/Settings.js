@@ -24,21 +24,16 @@ export default function SettingsScreen()
     const [bytesPerDay, setBytesPerDay] = useState(null);
 
     const topics = [
-        { label: "Cooking & Kitchen Skills", value: "Cooking & Kitchen Skills" },
-        { label: "Space & Astronomy", value: "Space & Astronomy" },
         { label: "Personal Finance", value: "Personal Finance" },
-        { label: "World History", value: "World History" },
-        { label: "Spanish Vocabulary", value: "Spanish Vocabulary" },
-        { label: "English Vocabulary", value: "English Vocabulary" },
         { label: "Psychology", value: "Psychology" },
-        { label: "Health & Nutrition", value: "Health & Nutrition" },
-        { label: "Music Theory", value: "Music Theory" },
-        { label: "Photography", value: "Photography" },
-        { label: "HTTP & Web Protocols", value: "HTTP & Web Protocols" },
-        { label: "AWS Cloud Services", value: "AWS Cloud Services" },
+        { label: "Space & Astronomy", value: "Space & Astronomy" },
+        { label: "World History", value: "World History" },
+        { label: "Nutrition Science", value: "Nutrition Science" },
+        { label: "Cooking & Food Science", value: "Cooking & Food Science" },
         { label: "Philosophy", value: "Philosophy" },
-        { label: "Chess Strategy", value: "Chess Strategy" },
-        { label: "Gardening", value: "Gardening" }
+        { label: "Etymology & Word Origins", value: "Etymology & Word Origins" },
+        { label: "Sleep & Energy", value: "Sleep & Energy" },
+        { label: "Geopolitics", value: "Geopolitics" }
     ];
 
     const bytesOptions = [
@@ -88,12 +83,17 @@ export default function SettingsScreen()
             setError(null);
             const token = await getIdToken();
             // console.log("token is: ", token);
+            setLoading(true);
             await updatePreferences(token, payload);
             setSuccessMessage("Successfully updated your preferences");
         }
         catch (err)
         {
             setPreferenceError(err.message ?? "Could not save preferences");
+        }
+        finally
+        {
+            setLoading(false);
         }
     }
 
@@ -149,28 +149,6 @@ export default function SettingsScreen()
     return(
         <View style={styles.container}>
             <Text style={styles.heading}>Settings</Text>
-
-            <View style={styles.card}>
-                <Text style={styles.label}>Signed in as</Text>
-                <Text style={styles.value}>{user?.signInDetails?.loginId ?? '-'}</Text>
-            </View>
-
-            {error && <Text style={styles.error}>{error}</Text>}
-
-            <Pressable
-                onPress={handleSignOut}
-                disabled={submitting}
-                style={({ pressed }) => [
-                    styles.button,
-                    pressed && styles.buttonPressed,
-                    submitting && styles.buttonDisabled,
-                ]}
-            >
-                <Text style={styles.buttonText}>
-                    {submitting ? 'Signing out…' : 'Sign out'}
-                </Text>
-            </Pressable>
-
             <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Preferences</Text>
                 <View>
@@ -224,6 +202,28 @@ export default function SettingsScreen()
                 {successMessage && <Text style={styles.successMessage}>{successMessage}</Text>}
                 {preferenceError && <Text style={styles.preferenceError}>{preferenceError}</Text>}
 
+            </View>
+
+            <View style={styles.card}>
+                <Text style={styles.label}>Signed in as</Text>
+                <Text style={styles.value}>{user?.signInDetails?.loginId ?? '-'}</Text>
+            </View>
+            <View style={styles.signOutArea}>
+                {error && <Text style={styles.error}>{error}</Text>}
+
+                <Pressable
+                    onPress={handleSignOut}
+                    disabled={submitting}
+                    style={({ pressed }) => [
+                        styles.button,
+                        pressed && styles.buttonPressed,
+                        submitting && styles.buttonDisabled,
+                    ]}
+                >
+                    <Text style={styles.buttonText}>
+                        {submitting ? 'Signing out…' : 'Sign out'}
+                    </Text>
+                </Pressable>
             </View>
         </View>
     )

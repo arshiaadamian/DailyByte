@@ -9,7 +9,7 @@ export default function ByteCard( {data} ) {
                 <Text style={styles.title}>{data.title}</Text>
                 <Text style={styles.body}>{data.body}</Text>
                 <Pressable onPress={() => Linking.openURL(data.sourceURL)} style={({ pressed }) => pressed && { opacity: 0.5 }}>
-                    <Text style={styles.source}>Read more →</Text>
+                    <Text style={styles.source}>Search →</Text>
                 </Pressable>
             </View>
         </View>

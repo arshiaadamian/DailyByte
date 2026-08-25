@@ -77,7 +77,8 @@ export default function HistoryScreen(){
             <Text style={styles.heading}>Your past bytes</Text>
             <FlatList
                 data={bytes}
-                keyExtractor={(item) => item.id}
+                key={(item) => item.id}
+                keyExtractor={(item) => item.date}
                 renderItem={({item}) => <ByteCard data={item} />}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
