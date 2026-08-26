@@ -44,6 +44,12 @@ const styles = StyleSheet.create({
     color: '#B3261E',
     marginTop: 16,
   },
+  success: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 15,
+    color: '#1b6a19',
+    marginTop: 16,
+  },
   passwordRow: {
     justifyContent: 'center',
   },

@@ -79,26 +79,12 @@ export function AuthProvider({ children }) // children is a special prop, it is 
 
     async function resetPassword(email)
     {
-        try 
-        {
-            await amplifyResetPassword({ username: email });
-        }
-        catch (err)
-        {
-            console.log(err);
-        }
+        await amplifyResetPassword({ username: email });
     }
 
     async function confirmResetPassword(email, confirmationCode, newPassword)
     {
-        try 
-        {
-            await amplifyConfirmResetPassword({ username: email, confirmationCode: confirmationCode, newPassword: newPassword});
-        }
-        catch (err)
-        {
-            console.log(err);
-        }
+        await amplifyConfirmResetPassword({ username: email, confirmationCode: confirmationCode, newPassword: newPassword});
     }
 
     async function getIdToken()
