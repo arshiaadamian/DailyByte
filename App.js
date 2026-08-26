@@ -15,6 +15,7 @@ import SettingsScreen from './screens/Settings';
 
 // import onboarding screens
 import WelcomeScreen from './screens/Onboarding/Welcome';
+import TopicScreen from './screens/Onboarding/Topic'
 
 // import NavBar
 import NavBar from "./components/NavBar";
@@ -78,13 +79,19 @@ function AppContent() {
   {
     if (authScreen === 'signUp')
     {
-      return <WelcomeScreen onSignInPress={() => setAuthScreen('signIn')}/>
+      return <WelcomeScreen onSignInPress={() => setAuthScreen('signIn')} onGoToTopic={() => setAuthScreen('topic')}/>
       // return <SignUpScreen onBackToSignIn={() => setAuthScreen('signIn')} />;
     }
     else if (authScreen === 'resetPassword')
     {
       return <ResetPasswordScreen onSignInPress={() => setAuthScreen('signIn')} />;
     }
+    else if (authScreen === 'topic')
+    {
+      return <TopicScreen />
+    }
+
+    // this else statement renders the Sign in screen.
     else
     {
       return <SignInScreen onSignUpPress={() => setAuthScreen('signUp')} onResetPress={() => setAuthScreen('resetPassword')} />;
