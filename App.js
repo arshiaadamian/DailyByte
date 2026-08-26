@@ -13,6 +13,9 @@ import HomeScreen from './screens/Home';
 import HistoryScreen from './screens/History';
 import SettingsScreen from './screens/Settings';
 
+// import onboarding screens
+import WelcomeScreen from './screens/Onboarding/Welcome';
+
 // import NavBar
 import NavBar from "./components/NavBar";
 
@@ -46,7 +49,7 @@ function AppContent() {
   const { status } = useAuth();
   // isActive state, the state that is passed down to the navbar, gets updated from there and gets passed back up.
   const [activeTab, setActiveTab] = useState("home");
-  const [authScreen, setAuthScreen] = useState("signIn");
+  const [authScreen, setAuthScreen] = useState("signUp");
 
   // reset back to the sign-in screen so a later sign-out doesn't land on sign-up
   useEffect(() => {
@@ -75,7 +78,8 @@ function AppContent() {
   {
     if (authScreen === 'signUp')
     {
-      return <SignUpScreen onBackToSignIn={() => setAuthScreen('signIn')} />;
+      return <WelcomeScreen onSignInPress={() => setAuthScreen('signIn')}/>
+      // return <SignUpScreen onBackToSignIn={() => setAuthScreen('signIn')} />;
     }
     else if (authScreen === 'resetPassword')
     {
