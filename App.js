@@ -14,8 +14,10 @@ import HistoryScreen from './screens/History';
 import SettingsScreen from './screens/Settings';
 
 // import onboarding screens
-import WelcomeScreen from './screens/Onboarding/Welcome';
-import TopicScreen from './screens/Onboarding/Topic'
+import OnboardingFlow from './screens/Onboarding/OnboardingFlow';
+// import WelcomeScreen from './screens/Onboarding/Welcome';
+// import TopicScreen from './screens/Onboarding/Topic'
+
 
 // import NavBar
 import NavBar from "./components/NavBar";
@@ -79,7 +81,8 @@ function AppContent() {
   {
     if (authScreen === 'signUp')
     {
-      return <WelcomeScreen onSignInPress={() => setAuthScreen('signIn')} onGoToTopic={() => setAuthScreen('topic')}/>
+      return <OnboardingFlow onSignInPress={() => setAuthScreen('signIn')}/>;
+      // return <WelcomeScreen onSignInPress={() => setAuthScreen('signIn')} onGoToTopic={() => setAuthScreen('topic')}/>
       // return <SignUpScreen onBackToSignIn={() => setAuthScreen('signIn')} />;
     }
     else if (authScreen === 'resetPassword')
@@ -88,7 +91,7 @@ function AppContent() {
     }
     else if (authScreen === 'topic')
     {
-      return <TopicScreen />
+      return <TopicScreen onSignInPress={() => setAuthScreen('signIn')} onGoToSchedule={() => setAuthScreen('schedule')}/>
     }
 
     // this else statement renders the Sign in screen.

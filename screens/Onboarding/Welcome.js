@@ -1,7 +1,7 @@
 import { View, Text, Pressable, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import styles from '../../style/Welcome.styles';
+import styles from '../../style/Onboarding.styles';
 import DailyByteLogo from '../../assets/logos/dailybyte-icon-light-1024.svg';
 
 

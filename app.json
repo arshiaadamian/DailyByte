@@ -30,7 +30,9 @@
           "resizeMode": "contain",
           "backgroundColor": "#E1DED3"
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker",
+      "expo-localization"
     ]
   }
 }
