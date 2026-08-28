@@ -189,6 +189,142 @@ const styles = StyleSheet.create({
     fontFamily: 'Newsreader_700Bold',
     color: '#F3EEE3',
   },
+  notificationTop: {
+    width: '100%',
+  },
+  notificationHeading: {
+    fontFamily: 'Newsreader_700Bold',
+    fontSize: 39,
+    lineHeight: 45,
+    color: '#2F2E2C',
+    marginBottom: 14,
+  },
+  notificationSubheading: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 19,
+    lineHeight: 27,
+    color: '#5A5546',
+    marginBottom: 32,
+  },
+  notificationCard: {
+    width: '112%',
+    alignSelf: 'center',
+    aspectRatio: 660 / 232,
+    marginBottom: 32,
+  },
+  notificationCaption: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 17,
+    lineHeight: 25,
+    color: '#5A5546',
+    textAlign: 'center',
+  },
+  secondaryButton: {
+    width: '100%',
+    backgroundColor: 'transparent',
+    borderRadius: 999,
+    paddingVertical: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#816148',
+    marginTop: 12,
+  },
+  secondaryButtonPressed: {
+    opacity: 0.6,
+  },
+  secondaryButtonText: {
+    fontFamily: 'Newsreader_700Bold',
+    fontSize: 17,
+    color: '#816148',
+  },
+
+  // --- Sign up / auth form ---
+  signUpScreen: {
+    flex: 1,
+    backgroundColor: '#E1DED3',
+  },
+  content: {
+    flex: 1,
+    paddingHorizontal: 28,
+    paddingTop: 80,
+  },
+  signUpHeading: {
+    fontFamily: 'Newsreader_700Bold',
+    fontSize: 32,
+    color: '#2F2E2C',
+    marginBottom: 4,
+  },
+  signUpSubheading: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 18,
+    color: '#5A5546',
+    marginBottom: 32,
+  },
+  label: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 15,
+    color: '#5A5546',
+    marginBottom: 6,
+    marginTop: 16,
+  },
+  input: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 17,
+    color: '#2F2E2C',
+    backgroundColor: '#F6F3EA',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#C6BDAB',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  error: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 15,
+    color: '#B3261E',
+    marginTop: 16,
+  },
+  passwordRow: {
+    justifyContent: 'center',
+  },
+  passwordInput: {
+    paddingRight: 44,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 4,
+    top: 0,
+    bottom: 0,
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  button: {
+    marginTop: 32,
+    backgroundColor: '#816148',
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonPressed: {
+    opacity: 0.7,
+  },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
+  buttonText: {
+    fontFamily: 'Newsreader_700Bold',
+    fontSize: 17,
+    color: '#E1DED3',
+  },
+  signUpLinkText: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 15,
+    color: '#816148',
+    textDecorationLine: 'underline',
+  },
 });
 
 export default styles;

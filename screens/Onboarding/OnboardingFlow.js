@@ -5,6 +5,8 @@ import { Text } from 'react-native';
 import WelcomeScreen from './Welcome';
 import TopicScreen from './Topic';
 import ScheduleScreen from './Schedule';
+import NotificationScreen from './Notification';
+import SignUpScreen from './SignUp';
 
 
 export default function OnboardingFlow({ onSignInPress })
@@ -51,11 +53,24 @@ export default function OnboardingFlow({ onSignInPress })
             </>
         )
     }
+    else if(screen === 'notification')
+    {
+        return (
+            <NotificationScreen onSignInPress={onSignInPress} onSignUpPress={() => setScreen('signUp')} />
+        );
+    }
+    // this else statement will render the signUp page
     else
     {
-        <Text>
-            notification page sample
-        </Text>
+        return (
+            <SignUpScreen 
+                onSignInPress={onSignInPress}
+                selectedTopic={selectedTopic}
+                bytesPerDay={bytesPerDay}
+                deliveryTime={deliveryTime}
+                timeZone={timeZone}
+            />
+        );
     }
     
 }

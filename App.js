@@ -5,7 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Newsreader_400Regular, Newsreader_700Bold } from '@expo-google-fonts/newsreader';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import SignInScreen from './screens/SignIn';
-import SignUpScreen from './screens/SignUp';
+import SignUpScreen from './screens/Onboarding/SignUp';
 import ResetPasswordScreen from './screens/ResetPassword';
 
 // import screens
@@ -81,7 +81,7 @@ function AppContent() {
   {
     if (authScreen === 'signUp')
     {
-      return <OnboardingFlow onSignInPress={() => setAuthScreen('signIn')}/>;
+      return <OnboardingFlow onSignInPress={() => setAuthScreen('signIn')} />;
       // return <WelcomeScreen onSignInPress={() => setAuthScreen('signIn')} onGoToTopic={() => setAuthScreen('topic')}/>
       // return <SignUpScreen onBackToSignIn={() => setAuthScreen('signIn')} />;
     }
@@ -89,11 +89,6 @@ function AppContent() {
     {
       return <ResetPasswordScreen onSignInPress={() => setAuthScreen('signIn')} />;
     }
-    else if (authScreen === 'topic')
-    {
-      return <TopicScreen onSignInPress={() => setAuthScreen('signIn')} onGoToSchedule={() => setAuthScreen('schedule')}/>
-    }
-
     // this else statement renders the Sign in screen.
     else
     {

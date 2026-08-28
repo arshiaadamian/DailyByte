@@ -1,10 +1,10 @@
 import { View, Text, Pressable, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
-import styles from '../style/SignUp.styles';
+import styles from '../../style/Onboarding.styles';
 
-export default function SignUpScreen({ onBackToSignIn })
+export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay, deliveryTime, timeZone })
 {
     const { signUp, confirmSignUp, resendCode } = useAuth();
 
@@ -95,14 +95,17 @@ export default function SignUpScreen({ onBackToSignIn })
     }
     return (
         <KeyboardAvoidingView
-            style={styles.screen}
+            style={styles.signUpScreen}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.content}>
+                <View style={styles.progressTrack}>
+                    <View style={[styles.progressFill, { width: '95%' }]} />
+                </View>
                 {!displayCodeInput && (
                     <View>
-                        <Text style={styles.heading}>Sign up</Text>
-                        <Text style={styles.subheading}>Create your DailyByte account.</Text>
+                        <Text style={styles.signUpHeading}>Sign up</Text>
+                        <Text style={styles.signUpSubheading}>Create your DailyByte account.</Text>
 
                         <Text style={styles.label}>Email</Text>
                         <TextInput
@@ -184,21 +187,21 @@ export default function SignUpScreen({ onBackToSignIn })
                         </Pressable>
 
                         <Pressable
-                            onPress={onBackToSignIn}
+                            onPress={onSignInPress}
                             style={({ pressed }) => [
                                 styles.resendButton,
                                 pressed && styles.resendButtonPressed,
                             ]}
                         >
-                            <Text style={styles.resendButtonText}>Already have an account? Sign in</Text>
+                            <Text style={styles.signUpLinkText}>Already have an account? Sign in</Text>
                         </Pressable>
                     </View>
                 )}
 
                 {displayCodeInput && (
                     <View>
-                        <Text style={styles.heading}>Check your email</Text>
-                        <Text style={styles.subheading}>Enter the confirmation code we sent you.</Text>
+                        <Text style={styles.signUpHeading}>Check your email</Text>
+                        <Text style={styles.signUpSubheading}>Enter the confirmation code we sent you.</Text>
 
                         <Text style={styles.label}>Code</Text>
                         <TextInput
@@ -234,7 +237,7 @@ export default function SignUpScreen({ onBackToSignIn })
                                 pressed && styles.resendButtonPressed,
                             ]}
                         >
-                            <Text style={styles.resendButtonText}>Resend code</Text>
+                            <Text style={styles.signUpLinkText}>Resend code</Text>
                         </Pressable>
                     </View>
                 )}
