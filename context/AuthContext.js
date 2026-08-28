@@ -63,9 +63,9 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         });
     }
 
-    async function confirmSignUp(email, code)
+    async function confirmSignUp(email, code, clientMetadata)
     {
-        await amplifyConfirmSignUp( {username: email, confirmationCode: code});
+        await amplifyConfirmSignUp( {username: email, confirmationCode: code, options: {clientMetadata} });
         await amplifyAutoSignIn();
         const currentUser = await getCurrentUser();
         setUser(currentUser);

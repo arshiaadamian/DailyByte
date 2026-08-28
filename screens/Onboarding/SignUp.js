@@ -18,6 +18,16 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    const deliveryHours = [deliveryTime.delivery1, deliveryTime.delivery2, deliveryTime.delivery3]
+        .filter(delivery => delivery !== null);
+
+    const clientMetadata = {
+        selectedTopic: selectedTopic,
+        bytesPerDay: String(bytesPerDay), 
+        deliveryTime: JSON.stringify(deliveryHours),
+        timeZone: timeZone
+    }
+
     async function handleSignUp()
     {
         if (!email.trim() || !password)
@@ -62,7 +72,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
         {
             setError(null);
             setSubmitting(true);
-            await confirmSignUp(email, code);
+            await confirmSignUp(email, code, clientMetadata);
             setSubmitting(false);
         }
         catch (err)
