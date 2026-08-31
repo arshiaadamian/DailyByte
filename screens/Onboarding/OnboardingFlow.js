@@ -39,7 +39,7 @@ export default function OnboardingFlow({ onSignInPress })
     else if (screen === 'schedule')
     {
         return (
-            <>
+            <> 
                 <ScheduleScreen onSignInPress={onSignInPress}
                     onGoToNotificationPress={() => setScreen('notification')}
                     setBytesPerDay={setBytesPerDay}
@@ -49,6 +49,8 @@ export default function OnboardingFlow({ onSignInPress })
                     setTimeZone={setTimeZone}
                 />
                 {console.log("Delivery time is: ", deliveryTime)}
+                {console.log("after get hours: " , (deliveryTime.delivery1 ? deliveryTime.delivery1.getHours() : "getHours is null"))}
+                {console.log("after get minutes: " , (deliveryTime.delivery1 ? deliveryTime.delivery1.getMinutes() : "getMinutes is null"))}
                 {console.log("user's timezone is: ", timeZone)}
             </>
         )

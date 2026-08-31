@@ -19,7 +19,8 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const deliveryHours = [deliveryTime.delivery1, deliveryTime.delivery2, deliveryTime.delivery3]
-        .filter(delivery => delivery !== null);
+        .filter(delivery => delivery !== null)
+        .map(delivery => ({ hour: delivery.getHours(),  minute: delivery.getMinutes()}));
 
     const clientMetadata = {
         selectedTopic: selectedTopic,
