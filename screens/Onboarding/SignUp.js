@@ -37,28 +37,43 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
             return;
         }
 
+        if (password !== confirmPassword)
+        {
+            setError("Passwords must match");
+            setSubmitting(false);
+            setDisplayCodeInput(false);
+            return;
+        }
+
         try
         {
-            setSubmitting(true);
             setError(null);
-            if (password === confirmPassword)
-            {
-                await signUp(email.trim(), password);
-                setSubmitting(false);
-                setDisplayCodeInput(true);
-            }
-            else
-            {
-                setError("Passwords have to match.");
-                setSubmitting(false);
-                setDisplayCodeInput(false);
-            }
-            
+
+            await signUp(email.trim(), password);
+            setSubmitting(false);
+            setDisplayCodeInput(true);
         }
         catch (err)
         {
-            setError(err.message ?? "Could not sign up");
-            setSubmitting(false);
+            if (err.name === 'UsernameExistsException')
+            {
+                try
+                {
+                    setSubmitting(false);
+                    await resendCode(email.trim());
+                    setDisplayCodeInput(true);
+                    setError("A new code was sent, please check your email again");
+                }
+                catch (err)
+                {
+                    setError("That email is already registered. Try signing in instead. err: " + err);
+                }
+            }
+            else
+            {
+                setError(err.message ?? "Could not sign up");
+                setSubmitting(false);
+            }
         }
     }
     
@@ -95,7 +110,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
         {
             setError(null)
             setSubmitting(true);
-            await resendCode(email);
+            await resendCode(email.trim());
             setSubmitting(false);
         }
         catch (err)
