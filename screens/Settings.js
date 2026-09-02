@@ -194,11 +194,6 @@ export default function SettingsScreen()
 
     }, []);
 
-    // CHANGED: removed the old "clear locked slots" effect - not needed since
-    // handleUpdatePreferences already only sends deliveryTime.slice(0, bytesPerDay), so slots
-    // beyond the current bytesPerDay are never sent, and locked rows never display their stored
-    // value anyway.
-
     // for testing
     // CHANGED: brought this back, but logging bytesPerDay directly instead of bytesPerDay.slice(...) -
     // bytesPerDay is a number, not an array, so .slice() on it was what crashed with "read property of null".
@@ -251,140 +246,139 @@ export default function SettingsScreen()
 
 
     return(
-        // CHANGED: whole page is now a ScrollView (was a plain View) - if the delivery rows,
-        // dropdowns, and a message/error banner all stack up taller than the screen, the page
-        // scrolls instead of squeezing the Save/Sign out buttons down and off the bottom.
-        <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.heading}>Settings</Text>
+        <View style={styles.root}>
+            {message && (
+                <View style={[styles.banner, styles.bannerSuccess]}>
+                    <Text style={[styles.bannerText, styles.bannerTextSuccess]}>{message}</Text>
+                </View>
+            )}
+            {error && (
+                <View style={[styles.banner, styles.bannerError]}>
+                    <Text style={[styles.bannerText, styles.bannerTextError]}>{error}</Text>
+                </View>
+            )}
 
-            {/* CHANGED: message/error now render once, here at the top of the page, instead of
-                twice (once under Save Preferences, once again above Sign out) - the duplication
-                was doubling the vertical space the banner took up. */}
-            {message && <Text style={styles.successMessage}>{message}</Text>}
+            <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+                <Text style={styles.heading}>Settings</Text>
 
-            <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Preferences</Text>
-                <View>
-                    <View style={styles.fieldGroup}>
-                        <Text style={styles.fieldLabel}>Topic</Text>
-                        <Dropdown
-                            style={styles.dropdown}
-                            containerStyle={styles.dropdownContainer}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedTextStyle={styles.dropdownSelectedText}
-                            itemTextStyle={styles.dropdownItemText}
-                            activeColor={styles.card.backgroundColor}
-                            data={topics}
-                            labelField="label"
-                            valueField="value"
-                            value={topic}
-                            placeholder="Choose a topic"
-                            onChange={item => setTopic(item.value)}
-                        />
-                    </View>
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Preferences</Text>
+                    <View>
+                        <View style={styles.fieldGroup}>
+                            <Text style={styles.fieldLabel}>Topic</Text>
+                            <Dropdown
+                                style={styles.dropdown}
+                                containerStyle={styles.dropdownContainer}
+                                placeholderStyle={styles.dropdownPlaceholder}
+                                selectedTextStyle={styles.dropdownSelectedText}
+                                itemTextStyle={styles.dropdownItemText}
+                                activeColor={styles.card.backgroundColor}
+                                data={topics}
+                                labelField="label"
+                                valueField="value"
+                                value={topic}
+                                placeholder="Choose a topic"
+                                onChange={item => setTopic(item.value)}
+                            />
+                        </View>
 
-                    <View style={styles.fieldGroup}>
-                        <Text style={styles.fieldLabel}>Bytes Per Day</Text>
-                        <Dropdown
-                            style={styles.dropdown}
-                            containerStyle={styles.dropdownContainer}
-                            placeholderStyle={styles.dropdownPlaceholder}
-                            selectedTextStyle={styles.dropdownSelectedText}
-                            itemTextStyle={styles.dropdownItemText}
-                            activeColor={styles.card.backgroundColor}
-                            data={bytesOptions}
-                            labelField="label"
-                            valueField="value"
-                            value={bytesPerDay}
-                            placeholder="How many per day?"
-                            onChange={item => setBytesPerDay(item.value)}
-                        />
-                    </View>
+                        <View style={styles.fieldGroup}>
+                            <Text style={styles.fieldLabel}>Bytes Per Day</Text>
+                            <Dropdown
+                                style={styles.dropdown}
+                                containerStyle={styles.dropdownContainer}
+                                placeholderStyle={styles.dropdownPlaceholder}
+                                selectedTextStyle={styles.dropdownSelectedText}
+                                itemTextStyle={styles.dropdownItemText}
+                                activeColor={styles.card.backgroundColor}
+                                data={bytesOptions}
+                                labelField="label"
+                                valueField="value"
+                                value={bytesPerDay}
+                                placeholder="How many per day?"
+                                onChange={item => setBytesPerDay(item.value)}
+                            />
+                        </View>
 
-                    {/* CHANGED: replaced the read-only time list with tappable rows + a time picker,
-                        same pattern as the onboarding Schedule.js screen. Locked slots (based on
-                        bytesPerDay) show a locked message instead of being selectable. */}
-                    <View style={styles.fieldGroup}>
-                        <Text style={styles.fieldLabel}>Delivery time</Text>
-                        {options.map(n => {
-                            const index = n - 1; // deliveryTime array is 0-indexed, slot numbers are 1-indexed
-                            const stored = deliveryTime?.[index];
-                            // convert the stored { hour, minute } back into a Date so the picker/labels can use it
-                            const value = stored ? new Date(1970, 0, 1, stored.hour, stored.minute) : null;
+                        <View style={styles.fieldGroup}>
+                            <Text style={styles.fieldLabel}>Delivery time</Text>
+                            {options.map(n => {
+                                const index = n - 1; // deliveryTime array is 0-indexed, slot numbers are 1-indexed
+                                const stored = deliveryTime?.[index];
+                                const value = stored ? new Date(1970, 0, 1, stored.hour, stored.minute) : null;
 
-                            if (isLocked[n])
-                            {
+                                if (isLocked[n])
+                                {
+                                    return (
+                                        <View key={n} style={styles.lockedRow}>
+                                            <Text style={styles.lockedRowText}>
+                                                {ORDINALS[n]} slot unlocks at {n} bytes per day
+                                            </Text>
+                                        </View>
+                                    );
+                                }
+
                                 return (
-                                    <View key={n} style={styles.lockedRow}>
-                                        <Text style={styles.lockedRowText}>
-                                            {ORDINALS[n]} slot unlocks at {n} bytes per day
-                                        </Text>
+                                    <View key={n}>
+                                        <Pressable
+                                            onPress={() => setActiveSlot(activeSlot === n ? null : n)}
+                                            style={styles.deliveryRow}
+                                        >
+                                            <Text style={styles.deliveryRowLabel}>
+                                                {value ? periodLabel(value) : 'Set a time'}
+                                            </Text>
+                                            {value && (
+                                                <Text style={styles.deliveryRowValue}>{formatClock(value)}</Text>
+                                            )}
+                                        </Pressable>
+                                        {activeSlot === n && (
+                                            <DateTimePicker
+                                                value={value ?? new Date(1970, 0, 1, 8, 0)}
+                                                mode="time"
+                                                is24Hour={false}
+                                                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                                                onChange={(event, selectedDate) => handleTimeChange(index, event, selectedDate)}
+                                            />
+                                        )}
                                     </View>
                                 );
-                            }
-
-                            return (
-                                <View key={n}>
-                                    <Pressable
-                                        onPress={() => setActiveSlot(activeSlot === n ? null : n)}
-                                        style={styles.deliveryRow}
-                                    >
-                                        <Text style={styles.deliveryRowLabel}>
-                                            {value ? periodLabel(value) : 'Set a time'}
-                                        </Text>
-                                        {value && (
-                                            <Text style={styles.deliveryRowValue}>{formatClock(value)}</Text>
-                                        )}
-                                    </Pressable>
-                                    {activeSlot === n && (
-                                        <DateTimePicker
-                                            value={value ?? new Date(1970, 0, 1, 8, 0)}
-                                            mode="time"
-                                            is24Hour={false}
-                                            display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                                            onChange={(event, selectedDate) => handleTimeChange(index, event, selectedDate)}
-                                        />
-                                    )}
-                                </View>
-                            );
-                        })}
+                            })}
+                        </View>
                     </View>
+
+                    <Pressable
+                        onPress={handleUpdatePreferences}
+                        disabled={isScheduleIncomplete}
+                        style={({ pressed }) => [
+                            styles.saveButton,
+                            isScheduleIncomplete && styles.buttonDisabled,
+                            pressed && styles.buttonPressed,
+                        ]}
+                    >
+                        <Text style={styles.saveButtonText}>Save Preferences</Text>
+                    </Pressable>
                 </View>
 
-                {/* CHANGED: Save button is now disabled until every unlocked slot has a time set */}
-                <Pressable
-                    onPress={handleUpdatePreferences}
-                    disabled={isScheduleIncomplete}
-                    style={({ pressed }) => [
-                        styles.saveButton,
-                        isScheduleIncomplete && styles.buttonDisabled,
-                        pressed && styles.buttonPressed,
-                    ]}
-                >
-                    <Text style={styles.saveButtonText}>Save Preferences</Text>
-                </Pressable>
-            </View>
-
-            <View style={styles.card}>
-                <Text style={styles.label}>Signed in as</Text>
-                <Text style={styles.value}>{user?.signInDetails?.loginId ?? '-'}</Text>
-            </View>
-            <View style={styles.signOutArea}>
-                <Pressable
-                    onPress={handleSignOut}
-                    disabled={submitting}
-                    style={({ pressed }) => [
-                        styles.button,
-                        pressed && styles.buttonPressed,
-                        submitting && styles.buttonDisabled,
-                    ]}
-                >
-                    <Text style={styles.buttonText}>
-                        {submitting ? 'Signing out…' : 'Sign out'}
-                    </Text>
-                </Pressable>
-                {error && <Text style={styles.error}>{error}</Text>}
-            </View>
-        </ScrollView>
+                <View style={styles.card}>
+                    <Text style={styles.label}>Signed in as</Text>
+                    <Text style={styles.value}>{user?.signInDetails?.loginId ?? '-'}</Text>
+                </View>
+                <View style={styles.signOutArea}>
+                    <Pressable
+                        onPress={handleSignOut}
+                        disabled={submitting}
+                        style={({ pressed }) => [
+                            styles.button,
+                            pressed && styles.buttonPressed,
+                            submitting && styles.buttonDisabled,
+                        ]}
+                    >
+                        <Text style={styles.buttonText}>
+                            {submitting ? 'Signing out…' : 'Sign out'}
+                        </Text>
+                    </Pressable>
+                </View>
+            </ScrollView>
+        </View>
     )
 }

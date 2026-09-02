@@ -238,6 +238,22 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#816148',
   },
+  backButton: {
+    alignSelf: 'flex-start',
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+    borderRadius: 999,
+    backgroundColor: '#D6D0C0',
+    marginBottom: 24,
+  },
+  backButtonPressed: {
+    opacity: 0.6,
+  },
+  backButtonText: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 14,
+    color: '#5A5546',
+  },
 
   // --- Sign up / auth form ---
   signUpScreen: {

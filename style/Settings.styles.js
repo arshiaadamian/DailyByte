@@ -1,17 +1,49 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#E1DED3',
   },
-  // NEW: contentContainerStyle for the ScrollView - padding moved here (from `container`) so the
-  // page can grow taller than the screen and scroll, instead of squeezing/pushing buttons off screen.
   scrollContent: {
     padding: 24,
     paddingTop: 60,
     paddingBottom: 40,
     flexGrow: 1,
+  },
+  banner: {
+    position: 'absolute',
+    top: 55,
+    left: 20,
+    right: 20,
+    zIndex: 10,
+    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 6,
+  },
+  bannerSuccess: {
+    backgroundColor: '#DCE9DD',
+  },
+  bannerError: {
+    backgroundColor: '#F3D9D6',
+  },
+  bannerText: {
+    fontFamily: 'Newsreader_400Regular',
+    fontSize: 15,
+  },
+  bannerTextSuccess: {
+    color: '#3D6B4F',
+  },
+  bannerTextError: {
+    color: '#7A241C',
   },
   heading: {
     fontFamily: 'Newsreader_700Bold',
@@ -36,18 +68,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Newsreader_700Bold',
     fontSize: 18,
     color: '#2F2E2C',
-  },
-  // CHANGED: turned into a rounded, tinted banner (was plain text) and given a bottom margin so
-  // it just pushes the section below it down slightly, instead of overlapping/cramping things.
-  error: {
-    fontFamily: 'Newsreader_400Regular',
-    fontSize: 15,
-    color: '#7A241C',
-    backgroundColor: '#F3D9D6',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    marginBottom: 24,
   },
   signOutArea: {
     marginTop: 0,
@@ -129,19 +149,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#E1DED3',
   },
-  // CHANGED: fixed the 'Newsreader_400RegFular' typo (was falling back to the system font),
-  // and turned into a rounded, tinted banner to match the `error` style above.
-  successMessage: {
-    fontFamily: 'Newsreader_400Regular',
-    fontSize: 15,
-    color: '#3D6B4F',
-    backgroundColor: '#DCE9DD',
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    marginBottom: 24,
-  },
-  // NEW: styles for the delivery-time rows, matching Onboarding.styles.js so Settings looks consistent
+  // styles for the delivery-time rows, matching Onboarding.styles.js so Settings looks consistent
   deliveryRow: {
     flexDirection: 'row',
     width: '100%',

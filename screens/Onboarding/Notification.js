@@ -3,7 +3,7 @@ import {useState} from 'react';
 import styles from '../../style/Onboarding.styles';
 import NotificationImage from '../../assets/notification-preview.svg';
 
-export default function NotificationScreen({ onSignInPress, onSignUpPress })
+export default function NotificationScreen({ onSignInPress, onSignUpPress, onBack })
 {
     return (
         <KeyboardAvoidingView
@@ -11,6 +11,15 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress })
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.notificationTop}>
+                <Pressable
+                    onPress={onBack}
+                    style={({ pressed }) => [
+                        styles.backButton,
+                        pressed && styles.backButtonPressed,
+                    ]}
+                >
+                    <Text style={styles.backButtonText}>back</Text>
+                </Pressable>
                 <View style={styles.progressTrack}>
                     <View style={[styles.progressFill, { width: '85%' }]} />
                 </View>

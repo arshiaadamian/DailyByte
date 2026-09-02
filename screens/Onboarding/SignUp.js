@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
 import styles from '../../style/Onboarding.styles';
 
-export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay, deliveryTime, timeZone })
+export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay, deliveryTime, timeZone, onBack})
 {
     const { signUp, confirmSignUp, resendCode } = useAuth();
 
@@ -115,6 +115,16 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                 </View>
                 {!displayCodeInput && (
                     <View>
+                        <Pressable
+                            onPress={onBack}
+                            style={({ pressed }) => [
+                                styles.backButton,
+                                pressed && styles.backButtonPressed,
+                            ]}
+                        >
+                            <Text style={styles.backButtonText}>Back</Text>
+                        </Pressable>
+
                         <Text style={styles.signUpHeading}>Sign up</Text>
                         <Text style={styles.signUpSubheading}>Create your DailyByte account.</Text>
 
@@ -211,6 +221,16 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
 
                 {displayCodeInput && (
                     <View>
+                        <Pressable
+                            onPress={() => setDisplayCodeInput(false)}
+                            style={({ pressed }) => [
+                                styles.backButton,
+                                pressed && styles.backButtonPressed,
+                            ]}
+                        >
+                            <Text style={styles.backButtonText}>Back</Text>
+                        </Pressable>
+
                         <Text style={styles.signUpHeading}>Check your email</Text>
                         <Text style={styles.signUpSubheading}>Enter the confirmation code we sent you.</Text>
 

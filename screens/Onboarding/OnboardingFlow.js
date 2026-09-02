@@ -32,7 +32,6 @@ export default function OnboardingFlow({ onSignInPress })
         return (
             <>
                 <TopicScreen onSignInPress={onSignInPress} onGoToSchedule={() => setScreen('schedule')} setSelectedTopic={setSelectedTopic} selectedTopic={selectedTopic} />
-                {console.log("topics is(from parent): " + selectedTopic)}
             </>
         );
     }
@@ -47,18 +46,23 @@ export default function OnboardingFlow({ onSignInPress })
                     setDeliveryTime={setDeliveryTime}
                     deliveryTime={deliveryTime}
                     setTimeZone={setTimeZone}
+                    onBack={() => setScreen('topic')}
                 />
                 {console.log("Delivery time is: ", deliveryTime)}
                 {console.log("after get hours: " , (deliveryTime.delivery1 ? deliveryTime.delivery1.getHours() : "getHours is null"))}
                 {console.log("after get minutes: " , (deliveryTime.delivery1 ? deliveryTime.delivery1.getMinutes() : "getMinutes is null"))}
                 {console.log("user's timezone is: ", timeZone)}
+                {console.log("topics is(from parent): " + selectedTopic)}
             </>
         )
     }
     else if(screen === 'notification')
     {
         return (
-            <NotificationScreen onSignInPress={onSignInPress} onSignUpPress={() => setScreen('signUp')} />
+            <NotificationScreen 
+                onSignInPress={onSignInPress} onSignUpPress={() => setScreen('signUp')} 
+                onBack={() => setScreen('schedule')}
+            />
         );
     }
     // this else statement will render the signUp page
@@ -71,6 +75,8 @@ export default function OnboardingFlow({ onSignInPress })
                 bytesPerDay={bytesPerDay}
                 deliveryTime={deliveryTime}
                 timeZone={timeZone}
+                onBack={() => setScreen('notification')}
+
             />
         );
     }

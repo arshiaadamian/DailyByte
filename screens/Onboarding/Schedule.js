@@ -24,7 +24,15 @@ function periodLabel(date)
     return 'Night';
 }
 
-export default function ScheduleScreen({ onSignInPress, onGoToNotificationPress, setBytesPerDay, bytesPerDay, setDeliveryTime, deliveryTime, setTimeZone })
+export default function ScheduleScreen({ 
+        onSignInPress,
+        onGoToNotificationPress,
+        setBytesPerDay,
+        bytesPerDay,
+        setDeliveryTime, 
+        deliveryTime, 
+        setTimeZone, 
+        onBack })
 {
     const options = [1, 2, 3];
     const [activeSlot, setActiveSlot] = useState(null);
@@ -90,6 +98,18 @@ export default function ScheduleScreen({ onSignInPress, onGoToNotificationPress,
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.scheduleTop}>
+                <Pressable
+                    onPress={onBack}
+                    style={({ pressed }) => [
+                        styles.backButton,
+                        pressed && styles.backButtonPressed,
+                    ]}
+                >
+                    <Text style={styles.backButtonText}>
+                    back
+                    </Text>
+                </Pressable>
+
                 <View style={styles.progressTrack}>
                     <View style={styles.progressFill} />
                 </View>
@@ -170,6 +190,7 @@ export default function ScheduleScreen({ onSignInPress, onGoToNotificationPress,
                 >
                     <Text style={styles.primaryButtonText}>Continue</Text>
                 </Pressable>
+
                 <Pressable
                     onPress={onSignInPress}
                     style={({ pressed }) => [
