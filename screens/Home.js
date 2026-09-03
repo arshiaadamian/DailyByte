@@ -73,6 +73,15 @@ export default function HomeScreen() {
         );
     }
 
+    if (!byte)
+    {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.message}>Your first byte is on its way.</Text>
+            </View>
+        );
+    }
+
     if (error)
     {
         return (

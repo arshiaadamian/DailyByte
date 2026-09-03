@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "dailybyte-app",
+    "name": "DailyByte",
     "slug": "dailybyte-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,7 +9,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.arshiaadamian.dailybyte-app"
+      "bundleIdentifier": "com.arshiaadamian.dailyByte"
     },
     "android": {
       "adaptiveIcon": {
