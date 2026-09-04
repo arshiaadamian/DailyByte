@@ -49,6 +49,7 @@ export async function updatePreferences(token, reqBody)
     return response.json();
 }
 
+// not being used in the client side, no need for the gateway
 export async function generateNewByte(token)
 {
     const response = await fetch(GENERATE_SINGLE_BYTE,

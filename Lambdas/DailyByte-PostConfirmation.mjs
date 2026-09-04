@@ -30,6 +30,7 @@ export const handler = async (event) => {
   const bytesPerDay = parseInt(meta.bytesPerDay);
   const deliveryTime = JSON.parse(meta.deliveryTime);
   const timeZone = meta.timeZone;
+  const pushToken = meta.pushToken;
 
   const now = new Date().toISOString().split("T")[0];
   console.log("request is: ", event.request);
@@ -46,7 +47,8 @@ export const handler = async (event) => {
         timeZone: timeZone,
         topic: selectedTopic,
         createdAt: now, 
-        deliveryTime: deliveryTime
+        deliveryTime: deliveryTime,
+        pushToken: pushToken
       },
       // This prevents from overwritting a field in the users table, if it already exists
       ConditionExpression: "attribute_not_exists(userId)"

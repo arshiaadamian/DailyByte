@@ -3,8 +3,48 @@ import {useState} from 'react';
 import styles from '../../style/Onboarding.styles';
 import NotificationImage from '../../assets/notification-preview.svg';
 
-export default function NotificationScreen({ onSignInPress, onSignUpPress, onBack })
+// what allows you to communicate with iphone notifications from your code
+import * as Notifications from 'expo-notifications';
+
+// project id from app.json
+import Constants from 'expo-constants';
+
+
+
+export default function NotificationScreen({ onSignInPress, onSignUpPress, onBack, setPushToken })
 {
+
+    // function to get notification permission and pushToken, if user denies this, it will never pop up again, and user must 
+    async function registerForPush()
+    {
+        const currentNotificationState = await Notifications.getPermissionsAsync();
+        let status = currentNotificationState.status;
+        // console.log("currentNotification is: ", status);
+
+        if (status !== 'granted' && currentNotificationState.canAskAgain != false)
+        {
+            const result = await Notifications.requestPermissionsAsync();
+            status = result.status
+            console.log("after permission set: ", status);
+        }
+
+
+        if (status === 'granted')
+        {
+            const projectId = Constants.expoConfig.extra.eas.projectId;
+            const token = await Notifications.getExpoPushTokenAsync({ projectId });
+            const tokenData = token.data;
+            console.log("token is: ", tokenData);
+            setPushToken(tokenData);
+        }
+        else 
+        {
+            // point them to Settings
+            Linking.openSettings();
+        }
+    }
+
+
     return (
         <KeyboardAvoidingView
             style={styles.screen}
@@ -32,7 +72,7 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
             </View>
             <View style={styles.actions}>
                 <Pressable
-                    onPress={onSignUpPress}
+                    onPress={registerForPush}
                     style={({ pressed }) => [
                         styles.primaryButton,
                         pressed && styles.primaryButtonPressed,

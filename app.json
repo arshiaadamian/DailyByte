@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "dailybyte",
     "name": "DailyByte",
     "slug": "dailybyte-app",
     "version": "1.0.0",
@@ -9,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.arshiaadamian.dailyByte"
+      "bundleIdentifier": "com.arshiaadamian.dailybyte"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +34,12 @@
       ],
       "@react-native-community/datetimepicker",
       "expo-localization"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ff09eb3a-ee85-4de9-a947-e79784a9f27d"
+      }
+    },
+    "owner": "arshiaadamian"
   }
 }

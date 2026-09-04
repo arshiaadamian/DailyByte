@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
 import styles from '../../style/Onboarding.styles';
 
-export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay, deliveryTime, timeZone, onBack})
+export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay, deliveryTime, timeZone, onBack, pushToken})
 {
     const { signUp, confirmSignUp, resendCode } = useAuth();
 
@@ -26,7 +26,8 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
         selectedTopic: selectedTopic,
         bytesPerDay: String(bytesPerDay), 
         deliveryTime: JSON.stringify(deliveryHours),
-        timeZone: timeZone
+        timeZone: timeZone,
+        pushToken: pushToken
     }
 
     async function handleSignUp()

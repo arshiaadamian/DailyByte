@@ -198,9 +198,9 @@ export default function SettingsScreen()
     // CHANGED: brought this back, but logging bytesPerDay directly instead of bytesPerDay.slice(...) -
     // bytesPerDay is a number, not an array, so .slice() on it was what crashed with "read property of null".
     useEffect(() => {
-        console.log("isLocked: ", isLocked);
-        console.log("Bytes per day is: ", bytesPerDay);
-        console.log("topic is: ", topic);
+        // console.log("isLocked: ", isLocked);
+        // console.log("Bytes per day is: ", bytesPerDay);
+        // console.log("topic is: ", topic);
         // console.log("delivery is now:", deliveryTime.slice(0, bytesPerDay));
     }, [deliveryTime, topic, bytesPerDay]);
 
