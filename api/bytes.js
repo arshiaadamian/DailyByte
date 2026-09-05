@@ -5,6 +5,7 @@ const HISTORY_URL = `${API_BASE}/bytes/history`;
 const GENERATE_SINGLE_BYTE = `${API_BASE}/bytes/generate`;
 const UPDATE_PREFERENCES = `${API_BASE}/user/preferences`;
 const USER_INFORMATION = `${API_BASE}/user/information`;
+const SAVE_TOKEN =`${API_BASE}/user/savetoken`
 
 export async function getUserInformation(token)
 {
@@ -114,6 +115,28 @@ export async function fetchHistory(token)
     }
 
     // parse json object into JS object
+    return response.json();
+}
+
+export async function savePushToken(token, pushToken)
+{
+    const response = await fetch(SAVE_TOKEN, {
+        method: "PATCH",
+        headers:
+        {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+        }, 
+        body: JSON.stringify({pushToken})
+    });
+
+    if (!response.ok)
+    {
+        const detail = await response.text();
+        const message = JSON.parse(detail).message;
+        throw new Error(`${message}`);
+    }
+
     return response.json();
 }
 

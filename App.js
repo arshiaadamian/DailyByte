@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar'
-import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Linking, SafeAreaView, StyleSheet, View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Newsreader_400Regular, Newsreader_700Bold } from '@expo-google-fonts/newsreader';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -23,6 +23,9 @@ import NavBar from "./components/NavBar";
 
 // import notifications
 import * as Notifications from 'expo-notifications';
+import Constants from 'expo-constants';
+import { savePushToken } from './api/bytes';
+
 
 
 
@@ -34,7 +37,7 @@ Notifications.setNotificationHandler({
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
-})
+});
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Newsreader_400Regular, Newsreader_700Bold });
@@ -60,7 +63,7 @@ export default function App() {
 }
 
 function AppContent() {
-  const { status } = useAuth();
+  const { status, getIdToken } = useAuth();
   // isActive state, the state that is passed down to the navbar, gets updated from there and gets passed back up.
   const [activeTab, setActiveTab] = useState("home");
   const [authScreen, setAuthScreen] = useState("signUp");
@@ -70,6 +73,65 @@ function AppContent() {
     if (status === 'signedIn')
     {
       setAuthScreen('signIn');
+    }
+  }, [status]);
+
+  // get userId token and pushToken and call API to write pushToken to DynamoDB
+  async function handlePushToken()
+    {
+      const idToken = await getIdToken();
+
+      const currentNotificationState = await Notifications.getPermissionsAsync();
+      let status = currentNotificationState.status;
+      // console.log("currentNotification is: ", status);
+
+      let tokenData = '';
+
+      if (status !== 'granted' && currentNotificationState.canAskAgain != false)
+      {
+        const result = await Notifications.requestPermissionsAsync();
+        status = result.status
+        console.log("after permission set: ", status);
+      }
+
+      if (status === 'granted')
+      {
+        try
+        {
+          const projectId = Constants.expoConfig.extra.eas.projectId;
+          const token = await Notifications.getExpoPushTokenAsync({ projectId });
+          tokenData = token.data;
+          console.log("new pushToken is: ", tokenData);
+
+          // call the savePushToken API
+          try 
+          {
+            const response = await savePushToken(idToken, tokenData);
+            console.log("SavePushToken: ", response.message);
+          }
+          catch (err)
+          {
+            console.log("SavePushToken error: ", err.message);
+          }
+        }
+        catch (err)
+        {
+          console.log("Error with getting the getExpoPushTokenAsync function: ", err.message);
+        }
+      }
+      else
+      {
+        // point them to Settings
+        Linking.openSettings();
+        return;
+      }
+    }
+
+  // on launch, if singed in, write pushToken to database
+  useEffect(() => {
+    if (status === 'signedIn')
+    {
+      handlePushToken();
     }
   }, [status]);
 
