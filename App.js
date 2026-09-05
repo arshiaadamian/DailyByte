@@ -5,7 +5,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Newsreader_400Regular, Newsreader_700Bold } from '@expo-google-fonts/newsreader';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import SignInScreen from './screens/SignIn';
-import SignUpScreen from './screens/Onboarding/SignUp';
 import ResetPasswordScreen from './screens/ResetPassword';
 
 // import screens
@@ -22,8 +21,20 @@ import OnboardingFlow from './screens/Onboarding/OnboardingFlow';
 // import NavBar
 import NavBar from "./components/NavBar";
 
+// import notifications
+import * as Notifications from 'expo-notifications';
+
+
 
 SplashScreen.preventAutoHideAsync();
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+})
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Newsreader_400Regular, Newsreader_700Bold });

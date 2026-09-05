@@ -8,6 +8,7 @@ import { SchedulerClient, CreateScheduleCommand, DeleteScheduleCommand } from "@
 const USERS_TABLE = 'DailyBytes-Users';
 const GENERATE_FUNCTION = 'DailyByte-GenerateSingleByte'
 
+
 // DynamoDB
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -234,7 +235,7 @@ export const handler = async (event) => {
               Target: {
                 Arn: GENERATE_SINGLE_BYTE_ARN, // required
                 RoleArn: GENERATE_SINGLE_BYTE_ROLE_ARN, // required
-                Input: JSON.stringify({ userId: USER_ID }) // userId passed as the payload of the body, which can be used in the GenerateSingleByte, notice { ... } is the event object in the receiving funtion.
+                Input: JSON.stringify({ userId: USER_ID, notify: true }) // userId passed as the payload of the body, which can be used in the GenerateSingleByte, notice { ... } is the event object in the receiving funtion.
               }
             })
             await schedulerClient.send(scheduler);

@@ -202,7 +202,7 @@ export const handler = async (event) => {
           body: JSON.stringify(message)
         });
 
-        const result = response.json();
+        const result = await response.json();
         console.log("Expo push response: ", JSON.stringify(result));
       }
       catch (err)
