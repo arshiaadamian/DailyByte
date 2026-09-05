@@ -13,6 +13,7 @@ const docClient = DynamoDBDocumentClient.from(client);
 
 const USERS_TABLE = 'DailyBytes-Users';
 const BYTES_TABLE = 'DailyByte-Bytes'; 
+const EXPO_PUSH_URL = 'https://exp.host/--/api/v2/push/send';
 
 // strips markdown fences if the model added them, then parses
 function extractJson(text)
@@ -162,6 +163,7 @@ export const handler = async (event) => {
     const now = new Date().toISOString();
 
     const timeSuffix = now.slice(11, 19).replace(/:/g, "");
+
     // write it to dynamoDB
     const newByte = {
       TableName: BYTES_TABLE,
@@ -176,6 +178,45 @@ export const handler = async (event) => {
     };
 
     await docClient.send(new PutCommand(newByte));
+
+    // if this lambda was triggered by schedulers, then a notification should be sent to the user, and a pushToken variable is present in the payload.
+    const pushToken = dynamoDBResponse.Items[0].pushToken;
+    if (event.notify)
+    {
+      const message = {
+        to: pushToken,
+        title: bedrockResponseText.title,
+        body: bedrockResponseText.body,
+        sound: 'default',
+        data: { date: now}
+      }
+
+      try 
+      {
+        const response = await fetch(EXPO_PUSH_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(message)
+        });
+
+        const result = response.json();
+        console.log("Expo push response: ", JSON.stringify(result));
+      }
+      catch (err)
+      {
+        console.log("Error with sending notification: ", err.message);
+        return {
+          statusCode: 400,
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({message: "Failed to send notification"})
+        }
+      }
+    }
 
     return {
       statusCode: 200,

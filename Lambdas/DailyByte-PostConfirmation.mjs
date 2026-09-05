@@ -102,7 +102,7 @@ export const handler = async (event) => {
         Target: {
           Arn: GENERATE_SINGLE_BYTE_ARN, // required
           RoleArn: GENERATE_SINGLE_BYTE_ROLE_ARN, // required
-          Input: JSON.stringify({ userId }) // userId passed as the payload of the body, which can be used in the GenerateSingleByte, notice { ... } is the event object in the receiving funtion.
+          Input: JSON.stringify({ userId, notify: true }) // userId passed as the payload of the body, which can be used in the GenerateSingleByte, notice { ... } is the event object in the receiving funtion.
         }
       })
       await schedulerClient.send(scheduler);
