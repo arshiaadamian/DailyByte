@@ -87,13 +87,6 @@ function AppContent() {
 
       let tokenData = '';
 
-      if (status !== 'granted' && currentNotificationState.canAskAgain != false)
-      {
-        const result = await Notifications.requestPermissionsAsync();
-        status = result.status
-        console.log("after permission set: ", status);
-      }
-
       if (status === 'granted')
       {
         try
@@ -118,12 +111,6 @@ function AppContent() {
         {
           console.log("Error with getting the getExpoPushTokenAsync function: ", err.message);
         }
-      }
-      else
-      {
-        // point them to Settings
-        Linking.openSettings();
-        return;
       }
     }
 
