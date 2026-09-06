@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
 import styles from '../../style/Onboarding.styles';
-import { Daisy, DaisyPerch } from '../../components/Mascot';
+import { Daisy } from '../../components/Mascot';
 import { FadeIn, PressableScale } from '../../components/Motion';
 import { daisy } from '../../assets/mascots';
 
@@ -150,16 +150,19 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             <Text style={styles.signUpSubheading}>Create your DailyByte account.</Text>
                         </FadeIn>
 
-                        <Text style={styles.label}>Email</Text>
-                        {/* Daisy sits directly above the field with a negative
-                            bottom margin, so the input paints over her paws and
-                            she reads as popping out of it. */}
-                        <DaisyPerch
-                            source={daisy.graduation}
-                            height={98}
-                            overlap={20}
-                            style={styles.fieldMascot}
-                        />
+                        {/* Label and Daisy share a row so the label stays put
+                            directly above its field. Her negative bottom margin
+                            drops her past the row, and the input - declared
+                            after her - paints over her paws. */}
+                        <View style={styles.fieldHeader}>
+                            <Text style={styles.label}>Email</Text>
+                            <Daisy
+                                source={daisy.graduation}
+                                height={96}
+                                style={styles.fieldMascot}
+                                pointerEvents="none"
+                            />
+                        </View>
                         <TextInput
                             style={styles.input}
                             value={email}

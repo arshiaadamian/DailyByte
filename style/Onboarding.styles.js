@@ -242,11 +242,20 @@ const styles = StyleSheet.create({
     color: colors.onBrand,
   },
 
-  // Daisy perched on a form field: tucked closer to the right edge than the
-  // default perch, and given a little breathing room under the label.
+  // Row holding a field's label and Daisy. flex-end keeps the label pinned to
+  // the bottom of the row, so it stays tight above its input no matter how tall
+  // she is.
+  fieldHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
+  // The negative bottom margin shortens her outer box, so she overhangs the row
+  // and the input below paints across her paws.
   fieldMascot: {
     marginRight: 14,
-    marginTop: 2,
+    marginBottom: -22,
   },
 
   // --- Notification step ---
