@@ -1,21 +1,50 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
+import { colors, radius, shadow } from "./theme";
 
 const styles = StyleSheet.create({
-    navbar: {
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
+    // Floats over the active screen rather than taking a row in the layout.
+    // Screens reserve room for it with theme's NAV_CLEARANCE.
+    wrap: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        bottom: Platform.OS === 'ios' ? 34 : 22,
         alignItems: 'center',
-        backgroundColor: '#2F2E2C',
-        paddingVertical: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 4,
+    },
+    bar: {
+        flexDirection: 'row',
+        backgroundColor: colors.paper,
+        borderRadius: radius.pill,
+        borderWidth: 1,
+        borderColor: colors.line,
+        padding: 6,
+        width: 232,
+        ...shadow.lifted,
+    },
+    row: {
+        flexDirection: 'row',
+        flex: 1,
+        alignItems: 'center',
+    },
+    // Slides behind the icons to mark the active tab.
+    indicatorSlot: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    indicator: {
+        width: 46,
+        height: 46,
+        borderRadius: radius.pill,
+        backgroundColor: colors.brand,
     },
     iconButton: {
-        paddingVertical: 8,
-        paddingHorizontal: 30,
+        flex: 1,
+        height: 46,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 })
 

@@ -1,7 +1,8 @@
-import { View, Text, Pressable, KeyboardAvoidingView, TextInput, Platform, FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { View, Text, KeyboardAvoidingView, Platform, FlatList } from 'react-native';
 import styles from '../../style/Onboarding.styles';
+import { Daisy } from '../../components/Mascot';
+import { FadeIn, PressableScale } from '../../components/Motion';
+import { daisy } from '../../assets/mascots';
 
 
 
@@ -29,33 +30,47 @@ export default function TopicScreen({ onSignInPress, setSelectedTopic, selectedT
                 <View style={styles.progressTrack}>
                     <View style={[styles.progressFill, { width: '35%' }]} />
                 </View>
-                <Text style={styles.scheduleHeading}>What do you want to know more about?</Text>
-                <Text style={styles.sectionLabel}>Select one topic and learn it deeper every day.</Text>
-                <Text style={styles.sectionLabel}>You can change this any time.</Text>
+
+                <FadeIn style={styles.stepHeader}>
+                    <View style={styles.stepHeaderText}>
+                        <Text style={styles.stepEyebrow}>Step one</Text>
+                        <Text style={styles.scheduleHeading}>What do you want to know more about?</Text>
+                    </View>
+                    <Daisy source={daisy.glasses} height={92} />
+                </FadeIn>
+
+                <FadeIn delay={90}>
+                    <Text style={styles.stepCaption}>Select one topic and learn it deeper every day.</Text>
+                    <Text style={styles.stepCaption}>You can change this any time.</Text>
+                </FadeIn>
+
                 <FlatList
                     data={topics}
                     keyExtractor={item => item.value}
                     numColumns={2}
                     columnWrapperStyle={styles.topicRow}
                     scrollEnabled={false}
-                    renderItem={({ item }) => (
-                        <Pressable
-                            onPress={() => setSelectedTopic(item.value)}
-                            style={[
-                                styles.topicPill,
-                                selectedTopic === item.value && styles.topicPillSelected,
-                            ]}
-                        >
-                            <Text style={[
-                                styles.topicPillText,
-                                selectedTopic === item.value && styles.topicPillTextSelected,
-                            ]}>{item.label}</Text>
-                        </Pressable>
+                    style={styles.topicList}
+                    renderItem={({ item, index }) => (
+                        <FadeIn delay={140 + index * 40} offset={10} style={styles.topicCell}>
+                            <PressableScale
+                                onPress={() => setSelectedTopic(item.value)}
+                                style={[
+                                    styles.topicPill,
+                                    selectedTopic === item.value && styles.topicPillSelected,
+                                ]}
+                            >
+                                <Text style={[
+                                    styles.topicPillText,
+                                    selectedTopic === item.value && styles.topicPillTextSelected,
+                                ]}>{item.label}</Text>
+                            </PressableScale>
+                        </FadeIn>
                     )}
                  />
             </View>
             <View style={styles.actions}>
-                <Pressable
+                <PressableScale
                     disabled={ selectedTopic.trim() ? false : true}
                     onPress={onGoToSchedule}
                     style={({ pressed }) => [
@@ -65,16 +80,17 @@ export default function TopicScreen({ onSignInPress, setSelectedTopic, selectedT
                     ]}
                 >
                     <Text style={styles.primaryButtonText}>Continue</Text>
-                </Pressable>
-                <Pressable
+                </PressableScale>
+                <PressableScale
                     onPress={onSignInPress}
+                    scaleTo={0.98}
                     style={({ pressed }) => [
                         styles.resendButton,
                         pressed && styles.resendButtonPressed,
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Already have an account? Sign in</Text>
-                </Pressable>
+                </PressableScale>
             </View>
         </KeyboardAvoidingView>
     )

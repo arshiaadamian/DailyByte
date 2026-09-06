@@ -1,304 +1,414 @@
 import { StyleSheet } from 'react-native';
+import { colors, eyebrow, font, radius, shadow, space } from './theme';
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#E1DED3',
+    backgroundColor: colors.canvas,
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 28,
-    paddingTop: 80,
+    paddingTop: 72,
   },
+  // Only the welcome screen uses this. Taking the leftover space and centring
+  // in it keeps Daisy optically centred instead of leaving a dead gap above
+  // the buttons on taller phones.
   hero: {
+    flex: 1,
     alignItems: 'center',
-    marginTop: 40,
+    justifyContent: 'center',
   },
-  logo: {
-    marginBottom: 28,
+  // Daisy floats free on the welcome screen - no panel behind her.
+  heroArt: {
+    marginBottom: space.md,
   },
   heading: {
-    fontFamily: 'Newsreader_700Bold',
-    fontSize: 44,
-    color: '#2F2E2C',
+    fontFamily: font.bold,
+    fontSize: 42,
+    lineHeight: 48,
+    letterSpacing: -0.8,
+    color: colors.ink,
     textAlign: 'center',
-    marginBottom: 18,
+    marginBottom: 14,
   },
   subheading: {
-    fontFamily: 'Newsreader_400Regular',
-    fontSize: 19,
+    fontFamily: font.regular,
+    fontSize: 18,
     lineHeight: 28,
-    color: '#5A5546',
+    color: colors.inkSoft,
     textAlign: 'center',
   },
   actions: {
-    width: '80%',
+    width: '86%',
     alignItems: 'center',
   },
   primaryButton: {
     width: '100%',
-    backgroundColor: '#816148',
-    borderRadius: 999,
-    paddingVertical: 20,
+    backgroundColor: colors.brand,
+    borderRadius: radius.pill,
+    paddingVertical: 19,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadow.soft,
   },
   primaryButtonPressed: {
-    opacity: 0.85,
+    backgroundColor: colors.brandDeep,
   },
   primaryButtonDisabled: {
-    backgroundColor: '#B7AE9B',
-    opacity: 0.6,
+    backgroundColor: colors.canvasDeep,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   primaryButtonText: {
-    fontFamily: 'Newsreader_700Bold',
+    fontFamily: font.bold,
     fontSize: 17,
-    color: '#E1DED3',
+    letterSpacing: 0.3,
+    color: colors.onBrand,
   },
   resendButton: {
-    marginTop: 16,
+    marginTop: 14,
     paddingVertical: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
   resendButtonPressed: {
-    opacity: 0.6,
+    opacity: 0.55,
   },
   resendButtonText: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 14,
-    color: '#5A5546',
-    paddingBottom: 20
+    color: colors.inkSoft,
+    paddingBottom: 20,
   },
+
+  // --- Step screens (topic / schedule / notification) ---
   scheduleTop: {
     width: '100%',
+  },
+  // Header row that pairs the step's heading with a Daisy pose.
+  stepHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: space.md,
+  },
+  stepHeaderText: {
+    flex: 1,
+    paddingRight: space.md,
+  },
+  stepEyebrow: {
+    ...eyebrow,
+    marginBottom: 4,
+  },
+  stepCaption: {
+    fontFamily: font.regular,
+    fontSize: 15,
+    lineHeight: 22,
+    color: colors.inkSoft,
+    marginBottom: 4,
   },
   progressTrack: {
     flexDirection: 'row',
     width: '100%',
     height: 4,
-    borderRadius: 999,
+    borderRadius: radius.pill,
     overflow: 'hidden',
-    backgroundColor: '#D6D0C0',
-    marginBottom: 32,
+    backgroundColor: colors.canvasDeep,
+    marginBottom: 28,
   },
   progressFill: {
     width: '55%',
-    backgroundColor: '#2F2E2C',
-    borderRadius: 999,
+    backgroundColor: colors.brand,
+    borderRadius: radius.pill,
   },
   scheduleHeading: {
-    fontFamily: 'Newsreader_700Bold',
+    fontFamily: font.bold,
     fontSize: 28,
-    color: '#2F2E2C',
+    lineHeight: 34,
+    letterSpacing: -0.4,
+    color: colors.ink,
     textAlign: 'left',
-    marginBottom: 24,
+    marginBottom: 8,
   },
   sectionLabel: {
-    fontFamily: 'Newsreader_400Regular',
-    fontSize: 14,
-    color: '#5A5546',
+    ...eyebrow,
     marginBottom: 10,
+    marginTop: 6,
   },
   byteSelector: {
     flexDirection: 'row',
     width: '100%',
-    backgroundColor: '#D6D0C0',
-    borderRadius: 999,
+    backgroundColor: colors.canvasDeep,
+    borderRadius: radius.pill,
     padding: 4,
-    marginBottom: 28,
+    marginBottom: 24,
   },
   byteOption: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 999,
+    paddingVertical: 11,
+    borderRadius: radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
   byteOptionSelected: {
-    backgroundColor: '#F5F1E7',
+    backgroundColor: colors.paper,
+    ...shadow.soft,
   },
   byteOptionText: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 16,
-    color: '#5A5546',
+    color: colors.inkSoft,
   },
   byteOptionTextSelected: {
-    fontFamily: 'Newsreader_700Bold',
-    color: '#2F2E2C',
+    fontFamily: font.bold,
+    color: colors.ink,
   },
   deliveryRow: {
     flexDirection: 'row',
     width: '100%',
-    backgroundColor: '#816148',
-    borderRadius: 16,
+    backgroundColor: colors.paper,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.line,
     paddingVertical: 16,
-    paddingHorizontal: 20,
+    paddingHorizontal: 18,
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 10,
+    ...shadow.soft,
   },
   deliveryRowLabel: {
-    fontFamily: 'Newsreader_700Bold',
+    fontFamily: font.bold,
     fontSize: 16,
-    color: '#F3EEE3',
+    color: colors.ink,
   },
   deliveryRowValue: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 16,
-    color: '#D9C9B3',
+    color: colors.brand,
   },
   lockedRow: {
     width: '100%',
     borderWidth: 1,
     borderStyle: 'dashed',
-    borderColor: '#B7AE9B',
-    borderRadius: 16,
+    borderColor: colors.canvasDeep,
+    borderRadius: radius.md,
     paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   lockedRowText: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 14,
-    color: '#5A5546',
+    color: colors.inkFaint,
   },
   topicRow: {
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: 10,
+  },
+  topicList: {
+    marginTop: 14,
+  },
+  // FadeIn wraps each pill, so the cell carries the column width and the
+  // pill fills it.
+  topicCell: {
+    width: '48%',
   },
   topicPill: {
-    width: '48%',
-    backgroundColor: '#D6D0C0',
-    borderRadius: 999,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    width: '100%',
+    backgroundColor: colors.paper,
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.line,
+    paddingVertical: 13,
+    paddingHorizontal: 14,
     alignItems: 'center',
     justifyContent: 'center',
   },
   topicPillSelected: {
-    backgroundColor: '#816148',
+    backgroundColor: colors.brand,
+    borderColor: colors.brand,
+    ...shadow.soft,
   },
   topicPillText: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 14,
-    color: '#5A5546',
+    color: colors.inkSoft,
     textAlign: 'center',
   },
   topicPillTextSelected: {
-    fontFamily: 'Newsreader_700Bold',
-    color: '#F3EEE3',
+    fontFamily: font.bold,
+    color: colors.onBrand,
   },
+
+  // Daisy perched on a form field: tucked closer to the right edge than the
+  // default perch, and given a little breathing room under the label.
+  fieldMascot: {
+    marginRight: 14,
+    marginTop: 2,
+  },
+
+  // --- Notification step ---
   notificationTop: {
     width: '100%',
   },
   notificationHeading: {
-    fontFamily: 'Newsreader_700Bold',
-    fontSize: 39,
-    lineHeight: 45,
-    color: '#2F2E2C',
-    marginBottom: 14,
+    fontFamily: font.bold,
+    fontSize: 36,
+    lineHeight: 42,
+    letterSpacing: -0.6,
+    color: colors.ink,
+    marginBottom: 12,
   },
   notificationSubheading: {
-    fontFamily: 'Newsreader_400Regular',
-    fontSize: 19,
+    fontFamily: font.regular,
+    fontSize: 18,
     lineHeight: 27,
-    color: '#5A5546',
-    marginBottom: 32,
+    color: colors.inkSoft,
+    marginBottom: 26,
   },
-  notificationCard: {
-    width: '112%',
-    alignSelf: 'center',
-    aspectRatio: 660 / 232,
-    marginBottom: 32,
+  // The stage takes whatever vertical room is left over, so the mockup scales
+  // to the device instead of being pinned to one hard-coded height.
+  // A row, so the banner and Daisy each occupy their own width instead of her
+  // being layered on top of it. alignItems centres her against the banner.
+  notificationStage: {
+    width: '100%',
+    marginTop: 6,
+    marginBottom: 42,
+  },
+  // Keeps the source image's own proportions. The fill is sampled from the
+  // artwork's own corners so the shadow has a solid rounded shape to cast from
+  // (an iOS shadow on a transparent view renders nothing) without showing a
+  // seam against the image.
+  notificationBanner: {
+    width: '100%',
+    aspectRatio: 1080 / 344,
+    borderRadius: 20,
+    backgroundColor: '#584E49',
+    ...shadow.lifted,
+  },
+  notificationBannerImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 20,
+  },
+  // She grips an edge on her left and leans right, so she hooks over the
+  // preview's right side. Her artwork carries ~27% empty space on its right,
+  // which this offset accounts for - her visible body clears the card's text
+  // column and only crosses the empty right end of the banner.
+  // Offsets are relative to the mockup, and the bottom is a percentage so she
+  // stays beside the notification whatever height the phone ends up.
+  // Daisy and the caption sit side by side under the banner.
+  notificationFooter: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  // She grips an edge on her left, so bleeding her past the screen's padding
+  // makes that edge read as the side of the screen. The negative right margin
+  // reclaims the ~27% of empty space her artwork carries on that side, so it
+  // doesn't steal width from the caption.
+  notificationPeek: {
+    marginLeft: -34,
+    marginRight: -22,
+  },
+  // Daisy occupies 100 - 34 - 22 = 44pt of the row. Without an equal spacer on
+  // the far side the caption centres in what's left over and drifts right by
+  // her share; this balances the row so it centres on the screen instead.
+  // Keep this in step with the <Daisy> height and the margins above.
+  notificationFooterSpacer: {
+    width: 44,
   },
   notificationCaption: {
-    fontFamily: 'Newsreader_400Regular',
-    fontSize: 17,
+    flex: 1,
+    fontFamily: font.regular,
+    fontSize: 16,
     lineHeight: 25,
-    color: '#5A5546',
+    color: colors.inkSoft,
     textAlign: 'center',
   },
   secondaryButton: {
     width: '100%',
     backgroundColor: 'transparent',
-    borderRadius: 999,
-    paddingVertical: 20,
+    borderRadius: radius.pill,
+    paddingVertical: 19,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: '#816148',
-    marginTop: 12,
+    borderColor: colors.brand,
+    marginTop: 10,
   },
   secondaryButtonPressed: {
-    opacity: 0.6,
+    opacity: 0.55,
   },
   secondaryButtonText: {
-    fontFamily: 'Newsreader_700Bold',
+    fontFamily: font.bold,
     fontSize: 17,
-    color: '#816148',
+    color: colors.brand,
   },
   backButton: {
     alignSelf: 'flex-start',
     paddingVertical: 8,
-    paddingHorizontal: 18,
-    borderRadius: 999,
-    backgroundColor: '#D6D0C0',
-    marginBottom: 24,
+    paddingHorizontal: 16,
+    borderRadius: radius.pill,
+    backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.line,
+    marginBottom: 20,
   },
   backButtonPressed: {
-    opacity: 0.6,
+    opacity: 0.55,
   },
   backButtonText: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 14,
-    color: '#5A5546',
+    color: colors.inkSoft,
   },
 
   // --- Sign up / auth form ---
   signUpScreen: {
     flex: 1,
-    backgroundColor: '#E1DED3',
+    backgroundColor: colors.canvas,
   },
   content: {
     flex: 1,
     paddingHorizontal: 28,
-    paddingTop: 80,
+    paddingTop: 72,
   },
   signUpHeading: {
-    fontFamily: 'Newsreader_700Bold',
+    fontFamily: font.bold,
     fontSize: 32,
-    color: '#2F2E2C',
+    letterSpacing: -0.5,
+    color: colors.ink,
     marginBottom: 4,
   },
   signUpSubheading: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 18,
-    color: '#5A5546',
-    marginBottom: 32,
+    color: colors.inkSoft,
+    marginBottom: 28,
   },
   label: {
-    fontFamily: 'Newsreader_400Regular',
-    fontSize: 15,
-    color: '#5A5546',
-    marginBottom: 6,
-    marginTop: 16,
+    ...eyebrow,
+    marginBottom: 8,
+    marginTop: 18,
   },
   input: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 17,
-    color: '#2F2E2C',
-    backgroundColor: '#F6F3EA',
-    borderRadius: 10,
+    color: colors.ink,
+    backgroundColor: colors.paper,
+    borderRadius: radius.sm,
     borderWidth: 1,
-    borderColor: '#C6BDAB',
+    borderColor: colors.line,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
   },
   error: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 15,
-    color: '#B3261E',
+    color: colors.danger,
     marginTop: 16,
   },
   passwordRow: {
@@ -317,29 +427,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   button: {
-    marginTop: 32,
-    backgroundColor: '#816148',
-    borderRadius: 10,
-    paddingVertical: 14,
+    marginTop: 30,
+    backgroundColor: colors.brand,
+    borderRadius: radius.pill,
+    paddingVertical: 17,
     alignItems: 'center',
     justifyContent: 'center',
+    ...shadow.soft,
   },
   buttonPressed: {
-    opacity: 0.7,
+    backgroundColor: colors.brandDeep,
   },
   buttonDisabled: {
     opacity: 0.5,
   },
   buttonText: {
-    fontFamily: 'Newsreader_700Bold',
+    fontFamily: font.bold,
     fontSize: 17,
-    color: '#E1DED3',
+    letterSpacing: 0.3,
+    color: colors.onBrand,
   },
   signUpLinkText: {
-    fontFamily: 'Newsreader_400Regular',
+    fontFamily: font.regular,
     fontSize: 15,
-    color: '#816148',
-    textDecorationLine: 'underline',
+    color: colors.brand,
   },
 });
 

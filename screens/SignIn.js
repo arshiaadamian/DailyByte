@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import styles from '../style/SignIn.styles';
+import { Daisy } from '../components/Mascot';
+import { FadeIn, PressableScale } from '../components/Motion';
+import { daisy } from '../assets/mascots';
 
 
 export default function SignInScreen({ onSignUpPress, onResetPress }) {
@@ -46,8 +49,11 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.content}>
-                <Text style={styles.heading}>DailyByte</Text>
-                <Text style={styles.subheading}>One small idea a day.</Text>
+                <FadeIn>
+                    <Daisy source={daisy.tilted} height={132} style={styles.brandMark} />
+                    <Text style={styles.heading}>DailyByte</Text>
+                    <Text style={styles.subheading}>One small idea a day.</Text>
+                </FadeIn>
 
                 <Text style={styles.label}>Email</Text>
                 <TextInput
@@ -74,7 +80,7 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     autoCapitalize="none"
                     textContentType="password"
                     />
-                    <Pressable
+                    <PressableScale
                         onPress={() => setShowPassword((v) => !v)}
                         style={styles.eyeButton}
                         hitSlop={8}
@@ -84,12 +90,12 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                             size={20}
                             color="#5A5546"
                         />
-                    </Pressable>
+                    </PressableScale>
                 </View>
 
                 {error && <Text style={styles.error}>{error}</Text>}
 
-                <Pressable
+                <PressableScale
                 onPress={handleSignIn}
                 disabled={submitting}
                 style={({ pressed }) => [
@@ -101,8 +107,8 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                 {submitting
                     ? <ActivityIndicator color="#E1DED3" />
                     : <Text style={styles.buttonText}>Sign in</Text>}
-                </Pressable>
-                <Pressable
+                </PressableScale>
+                <PressableScale
                     onPress={onSignUpPress}
                     style={({ pressed }) => [
                         styles.resendButton,
@@ -110,10 +116,10 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Don't have an account? Sign up</Text>
-                </Pressable>
+                </PressableScale>
 
                 
-                <Pressable
+                <PressableScale
                     onPress={onResetPress}
                     style={({ pressed }) => [
                         styles.resendButton,
@@ -121,7 +127,7 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Reset Password</Text>
-                </Pressable>
+                </PressableScale>
 
 
             </View>

@@ -1,29 +1,52 @@
 import { StyleSheet } from "react-native";
+import { colors, eyebrow, font, radius, shadow, space, NAV_CLEARANCE } from "./theme";
 
 const styles = StyleSheet.create({
-    container: {
+  container: {
     flex: 1,
-    backgroundColor: '#E1DED3',
+    backgroundColor: colors.canvas,
+  },
+  masthead: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
+    justifyContent: 'space-between',
+    paddingHorizontal: space.lg,
+    paddingTop: 68,
+    paddingBottom: space.lg,
   },
-  message: {
-    fontFamily: 'Newsreader_400Regular',
-    fontSize: 20,
-    color: '#5A5546',
-    textAlign: 'center',
+  eyebrow: {
+    ...eyebrow,
+    marginBottom: 2,
   },
-  heading: {
-    fontFamily: 'Newsreader_700Bold',
-    fontSize: 28,
-    color: '#2F2E2C',
-    marginTop: 20,
-    marginBottom: 16,
+  mastheadTitle: {
+    fontFamily: font.bold,
+    fontSize: 34,
+    letterSpacing: -0.5,
+    color: colors.ink,
   },
   listContent: {
-    paddingBottom: 20,
-    gap: 16
+    paddingHorizontal: space.lg,
+    paddingBottom: NAV_CLEARANCE,
+    gap: space.md,
+  },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: NAV_CLEARANCE,
+  },
+  empty: {
+    paddingTop: space.xxl,
+    alignItems: 'center',
+  },
+  skeletonCard: {
+    height: 168,
+    borderRadius: radius.lg,
+    backgroundColor: colors.paper,
+    borderWidth: 1,
+    borderColor: colors.line,
+    marginBottom: space.md,
+    ...shadow.soft,
   },
 });
 

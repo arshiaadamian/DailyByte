@@ -1,8 +1,11 @@
-import { View, Text, Pressable, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
+import { View, Text, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
 import styles from '../../style/Onboarding.styles';
+import { Daisy, DaisyPerch } from '../../components/Mascot';
+import { FadeIn, PressableScale } from '../../components/Motion';
+import { daisy } from '../../assets/mascots';
 
 export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay, deliveryTime, timeZone, onBack, pushToken})
 {
@@ -131,7 +134,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                 </View>
                 {!displayCodeInput && (
                     <View>
-                        <Pressable
+                        <PressableScale
                             onPress={onBack}
                             style={({ pressed }) => [
                                 styles.backButton,
@@ -139,12 +142,24 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             ]}
                         >
                             <Text style={styles.backButtonText}>Back</Text>
-                        </Pressable>
+                        </PressableScale>
 
-                        <Text style={styles.signUpHeading}>Sign up</Text>
-                        <Text style={styles.signUpSubheading}>Create your DailyByte account.</Text>
+                        <FadeIn>
+                            <Text style={styles.stepEyebrow}>Last step</Text>
+                            <Text style={styles.signUpHeading}>Sign up</Text>
+                            <Text style={styles.signUpSubheading}>Create your DailyByte account.</Text>
+                        </FadeIn>
 
                         <Text style={styles.label}>Email</Text>
+                        {/* Daisy sits directly above the field with a negative
+                            bottom margin, so the input paints over her paws and
+                            she reads as popping out of it. */}
+                        <DaisyPerch
+                            source={daisy.graduation}
+                            height={98}
+                            overlap={20}
+                            style={styles.fieldMascot}
+                        />
                         <TextInput
                             style={styles.input}
                             value={email}
@@ -169,7 +184,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                                 autoCapitalize="none"
                                 textContentType="newPassword"
                             />
-                            <Pressable
+                            <PressableScale
                                 onPress={() => setShowPassword((v) => !v)}
                                 style={styles.eyeButton}
                                 hitSlop={8}
@@ -179,10 +194,10 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                                     size={20}
                                     color="#5A5546"
                                 />
-                            </Pressable>
+                            </PressableScale>
                         </View>
 
-                        <Text style={styles.label}>Confrim Password</Text>
+                        <Text style={styles.label}>Confirm Password</Text>
                         <View style={styles.passwordRow}>
                             <TextInput
                                 style={[styles.input, styles.passwordInput]}
@@ -194,7 +209,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                                 autoCapitalize="none"
                                 textContentType="newPassword"
                             />
-                            <Pressable
+                            <PressableScale
                                 onPress={() => setShowConfirmPassword((v) => !v)}
                                 style={styles.eyeButton}
                                 hitSlop={8}
@@ -204,12 +219,12 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                                     size={20}
                                     color="#5A5546"
                                 />
-                            </Pressable>
+                            </PressableScale>
                         </View>
 
                         {error && <Text style={styles.error}>{error}</Text>}
 
-                        <Pressable
+                        <PressableScale
                             onPress={handleSignUp}
                             disabled={submitting}
                             style={({ pressed }) => [
@@ -221,9 +236,9 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             <Text style={styles.buttonText}>
                                 {submitting ? 'Signing up…' : 'Sign up'}
                             </Text>
-                        </Pressable>
+                        </PressableScale>
 
-                        <Pressable
+                        <PressableScale
                             onPress={onSignInPress}
                             style={({ pressed }) => [
                                 styles.resendButton,
@@ -231,13 +246,13 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             ]}
                         >
                             <Text style={styles.signUpLinkText}>Already have an account? Sign in</Text>
-                        </Pressable>
+                        </PressableScale>
                     </View>
                 )}
 
                 {displayCodeInput && (
                     <View>
-                        <Pressable
+                        <PressableScale
                             onPress={() => setDisplayCodeInput(false)}
                             style={({ pressed }) => [
                                 styles.backButton,
@@ -245,10 +260,15 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             ]}
                         >
                             <Text style={styles.backButtonText}>Back</Text>
-                        </Pressable>
+                        </PressableScale>
 
-                        <Text style={styles.signUpHeading}>Check your email</Text>
-                        <Text style={styles.signUpSubheading}>Enter the confirmation code we sent you.</Text>
+                        <FadeIn style={styles.stepHeader}>
+                            <View style={styles.stepHeaderText}>
+                                <Text style={styles.signUpHeading}>Check your email</Text>
+                                <Text style={styles.signUpSubheading}>Enter the confirmation code we sent you.</Text>
+                            </View>
+                            <Daisy source={daisy.peek} height={90} />
+                        </FadeIn>
 
                         <Text style={styles.label}>Code</Text>
                         <TextInput
@@ -262,7 +282,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
 
                         {error && <Text style={styles.error}>{error}</Text>}
 
-                        <Pressable
+                        <PressableScale
                             onPress={handleConfirmationCode}
                             disabled={submitting}
                             style={({ pressed }) => [
@@ -274,9 +294,9 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             <Text style={styles.buttonText}>
                                 {submitting ? 'Confirming…' : 'Confirm code'}
                             </Text>
-                        </Pressable>
+                        </PressableScale>
 
-                        <Pressable
+                        <PressableScale
                             onPress={handleResendCode}
                             disabled={submitting}
                             style={({ pressed }) => [
@@ -285,7 +305,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             ]}
                         >
                             <Text style={styles.signUpLinkText}>Resend code</Text>
-                        </Pressable>
+                        </PressableScale>
                     </View>
                 )}
             </View>

@@ -167,5 +167,11 @@ function AppContent() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1},
+  root: { flex: 1 },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E1DED3',
+  },
 });

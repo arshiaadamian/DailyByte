@@ -1,7 +1,15 @@
-import { View, Text, KeyboardAvoidingView, Platform, Pressable } from 'react-native';
+import { View, Text, Image, KeyboardAvoidingView, Platform } from 'react-native';
 import {useState} from 'react';
 import styles from '../../style/Onboarding.styles';
-import NotificationImage from '../../assets/notification-preview.svg';
+
+// A real byte as it arrives, on its dark backdrop.
+// NOTE: notification_transparent.png cannot be used here - despite the name it
+// has no alpha channel (PNG colour type 2) and its transparency checkerboard is
+// baked into the pixels. Re-export it as PNG-32 to use it instead.
+const notificationShot = require('../../assets/notification_darkBG.jpg');
+import { Daisy } from '../../components/Mascot';
+import { FadeIn, PressableScale } from '../../components/Motion';
+import { daisy } from '../../assets/mascots';
 
 // what allows you to communicate with iphone notifications from your code
 import * as Notifications from 'expo-notifications';
@@ -51,7 +59,7 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.notificationTop}>
-                <Pressable
+                <PressableScale
                     onPress={onBack}
                     style={({ pressed }) => [
                         styles.backButton,
@@ -59,19 +67,39 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
                     ]}
                 >
                     <Text style={styles.backButtonText}>back</Text>
-                </Pressable>
+                </PressableScale>
                 <View style={styles.progressTrack}>
                     <View style={[styles.progressFill, { width: '85%' }]} />
                 </View>
-                <Text style={styles.notificationHeading}>This is the whole app.</Text>
-                <Text style={styles.notificationSubheading}>Your bytes arrive as notifications.{"\n"}You never have to open anything.</Text>
-                <View style={styles.notificationCard}>
-                    <NotificationImage width="100%" height="100%" />
-                </View>
-                <Text style={styles.notificationCaption}>You choose how many bytes{"\n"} a day, and when they arrive.{"\n"}Nothing else, ever.</Text>
+                <FadeIn>
+                    <Text style={styles.stepEyebrow}>Step three</Text>
+                    <Text style={styles.notificationHeading}>This is the whole app.</Text>
+                    <Text style={styles.notificationSubheading}>Your bytes arrive as notifications.{"\n"}You never have to open anything.</Text>
+                </FadeIn>
+
+                <FadeIn delay={110} style={styles.notificationStage}>
+                    <View style={styles.notificationBanner}>
+                        <Image
+                            source={notificationShot}
+                            style={styles.notificationBannerImage}
+                            resizeMode="cover"
+                        />
+                    </View>
+                </FadeIn>
+
+                <FadeIn delay={200} style={styles.notificationFooter}>
+                    <Daisy
+                        source={daisy.peek}
+                        height={100}
+                        style={styles.notificationPeek}
+                        pointerEvents="none"
+                    />
+                    <Text style={styles.notificationCaption}>You choose how many bytes{"\n"} a day, and when they arrive.{"\n"}Nothing else, ever.</Text>
+                    <View style={styles.notificationFooterSpacer} />
+                </FadeIn>
             </View>
             <View style={styles.actions}>
-                <Pressable
+                <PressableScale
                     onPress={registerForPush}
                     style={({ pressed }) => [
                         styles.primaryButton,
@@ -79,8 +107,8 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
                     ]}
                 >
                     <Text style={styles.primaryButtonText}>Turn on notifications</Text>
-                </Pressable>
-                <Pressable
+                </PressableScale>
+                <PressableScale
                     onPress={onSignUpPress}
                     style={({ pressed }) => [
                         styles.secondaryButton,
@@ -88,8 +116,8 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
                     ]}
                 >
                     <Text style={styles.secondaryButtonText}>Continue</Text>
-                </Pressable>
-                <Pressable
+                </PressableScale>
+                <PressableScale
                     onPress={onSignInPress}
                     style={({ pressed }) => [
                         styles.resendButton,
@@ -97,7 +125,7 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Already have an account? Sign in</Text>
-                </Pressable>
+                </PressableScale>
             </View>
         </KeyboardAvoidingView>
     )

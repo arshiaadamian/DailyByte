@@ -1,7 +1,10 @@
 // CHANGED: added Platform import, needed by handleTimeChange below (it was used but never imported before)
 // CHANGED: added ScrollView so the page can scroll instead of squeezing/pushing the buttons off screen
-import {View, Text, Pressable, TextInput, ActivityIndicator, Platform, ScrollView} from 'react-native';
+import {View, Text, TextInput, ActivityIndicator, Platform, ScrollView} from 'react-native';
 import styles from '../style/Settings.styles';
+import { Daisy } from '../components/Mascot';
+import { FadeIn, PressableScale } from '../components/Motion';
+import { daisy } from '../assets/mascots';
 import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -259,7 +262,13 @@ export default function SettingsScreen()
             )}
 
             <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.heading}>Settings</Text>
+                <FadeIn style={styles.masthead}>
+                    <View>
+                        <Text style={styles.eyebrow}>Yours</Text>
+                        <Text style={styles.heading}>Settings</Text>
+                    </View>
+                    <Daisy source={daisy.playful} height={96} />
+                </FadeIn>
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Preferences</Text>
@@ -320,7 +329,7 @@ export default function SettingsScreen()
 
                                 return (
                                     <View key={n}>
-                                        <Pressable
+                                        <PressableScale
                                             onPress={() => setActiveSlot(activeSlot === n ? null : n)}
                                             style={styles.deliveryRow}
                                         >
@@ -330,7 +339,7 @@ export default function SettingsScreen()
                                             {value && (
                                                 <Text style={styles.deliveryRowValue}>{formatClock(value)}</Text>
                                             )}
-                                        </Pressable>
+                                        </PressableScale>
                                         {activeSlot === n && (
                                             <DateTimePicker
                                                 value={value ?? new Date(1970, 0, 1, 8, 0)}
@@ -346,7 +355,7 @@ export default function SettingsScreen()
                         </View>
                     </View>
 
-                    <Pressable
+                    <PressableScale
                         onPress={handleUpdatePreferences}
                         disabled={isScheduleIncomplete}
                         style={({ pressed }) => [
@@ -356,7 +365,7 @@ export default function SettingsScreen()
                         ]}
                     >
                         <Text style={styles.saveButtonText}>Save Preferences</Text>
-                    </Pressable>
+                    </PressableScale>
                 </View>
 
                 <View style={styles.card}>
@@ -364,7 +373,7 @@ export default function SettingsScreen()
                     <Text style={styles.value}>{user?.signInDetails?.loginId ?? '-'}</Text>
                 </View>
                 <View style={styles.signOutArea}>
-                    <Pressable
+                    <PressableScale
                         onPress={handleSignOut}
                         disabled={submitting}
                         style={({ pressed }) => [
@@ -376,7 +385,7 @@ export default function SettingsScreen()
                         <Text style={styles.buttonText}>
                             {submitting ? 'Signing out…' : 'Sign out'}
                         </Text>
-                    </Pressable>
+                    </PressableScale>
                 </View>
             </ScrollView>
         </View>
