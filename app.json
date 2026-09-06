@@ -5,7 +5,7 @@
     "slug": "dailybyte-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Daisy_Mascot/DaisyMascot.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
@@ -14,20 +14,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/Daisy_Mascot/DaisyMascot.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/Daisy_Mascot/DaisyMascot.png"
     },
     "plugins": [
       "expo-font",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/splash-icon.png",
+          "image": "./assets/Daisy_Mascot/DaisyMascot.png",
           "resizeMode": "contain",
           "backgroundColor": "#E1DED3"
         }
