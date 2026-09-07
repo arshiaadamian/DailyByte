@@ -9,6 +9,17 @@ import { daisy } from '../../assets/mascots';
 
 const ORDINALS = { 2: 'Second', 3: 'Third' };
 
+// Slots start here rather than empty, so Continue is enabled without forcing
+// the user to nudge the picker first. Only the time part is ever read - SignUp
+// pulls getHours()/getMinutes() off these - so the date is arbitrary.
+const DEFAULT_DELIVERY_HOUR = 8;
+const DEFAULT_DELIVERY_MINUTE = 0;
+
+function defaultDeliveryTime()
+{
+    return new Date(1970, 0, 1, DEFAULT_DELIVERY_HOUR, DEFAULT_DELIVERY_MINUTE);
+}
+
 function formatClock(date)
 {
     let hours = date.getHours();
@@ -52,15 +63,31 @@ export default function ScheduleScreen({
     }
 
     useEffect(() => {
-        if (bytesPerDay == 1)
-        {
-            setDeliveryTime(prev => ({...prev, delivery2: null, delivery3: null}));
-        }
+        setDeliveryTime(prev => {
+            const next = {...prev};
 
-        if (bytesPerDay == 2)
-        {
-            setDeliveryTime(prev => ({...prev, delivery3: null}));
-        }
+            for (let n = 1; n <= options.length; n++)
+            {
+                const key = `delivery${n}`;
+
+                if (n <= bytesPerDay)
+                {
+                    // Newly unlocked slots get the default. A slot the user has
+                    // already set keeps their choice.
+                    if (!next[key])
+                    {
+                        next[key] = defaultDeliveryTime();
+                    }
+                }
+                else
+                {
+                    // Locked slots clear, as before.
+                    next[key] = null;
+                }
+            }
+
+            return next;
+        });
 
     }, [bytesPerDay]);
 
@@ -176,7 +203,7 @@ export default function ScheduleScreen({
                             </PressableScale>
                             {activeSlot === n && (
                                 <DateTimePicker
-                                    value={value ?? new Date(1970, 0, 1, 8, 0)}
+                                    value={value ?? defaultDeliveryTime()}
                                     mode="time"
                                     is24Hour={false}
                                     display={Platform.OS === 'ios' ? 'spinner' : 'default'}
