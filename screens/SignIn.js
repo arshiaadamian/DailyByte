@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import styles from '../style/SignIn.styles';
@@ -17,6 +17,20 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
+
+    // CHANGED: signInWithRedirect hands off to the browser, so submitting has to stay
+    // true past the call - the old finally cleared it the moment the browser opened.
+    // Nothing fires if the user backs out of Google instead of finishing, so the
+    // button is re-enabled when the app comes back to the foreground.
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (state) => {
+            if (state === 'active')
+            {
+                setSubmitting(false);
+            }
+        });
+        return () => subscription.remove();
+    }, []);
 
     async function handleSignIn()
     {
@@ -55,10 +69,6 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
         {
             setSubmitting(false);
             setError("Error with handleGoogleSignIn, " + err.message);
-        }
-        finally
-        {
-            setSubmitting(false);
         }
     }
 

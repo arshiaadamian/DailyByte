@@ -1,4 +1,6 @@
-import { View, Text, Image, KeyboardAvoidingView, Platform } from 'react-native';
+// CHANGED: Linking was used below but never imported - openSettings() threw on the
+// denied-permission path.
+import { View, Text, Image, KeyboardAvoidingView, Platform, Linking } from 'react-native';
 import {useState} from 'react';
 import styles from '../../style/Onboarding.styles';
 
@@ -19,7 +21,9 @@ import Constants from 'expo-constants';
 
 
 
-export default function NotificationScreen({ onSignInPress, onSignUpPress, onBack, setPushToken })
+// CHANGED: onSignUpPress -> onContinue. This is the last preference step now, and
+// Continue submits the profile rather than advancing to a sign-up screen.
+export default function NotificationScreen({ onSignInPress, onContinue, onBack, setPushToken })
 {
 
     // function to get notification permission and pushToken, if user denies this, it will never pop up again, and user must 
@@ -59,6 +63,10 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.notificationTop}>
+                <View style={styles.progressTrack}>
+                    <View style={[styles.progressFill, { width: '85%' }]} />
+                </View>
+
                 <PressableScale
                     onPress={onBack}
                     style={({ pressed }) => [
@@ -66,11 +74,8 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
                         pressed && styles.backButtonPressed,
                     ]}
                 >
-                    <Text style={styles.backButtonText}>back</Text>
+                    <Text style={styles.backButtonText}>Back</Text>
                 </PressableScale>
-                <View style={styles.progressTrack}>
-                    <View style={[styles.progressFill, { width: '85%' }]} />
-                </View>
                 <FadeIn>
                     <Text style={styles.stepEyebrow}>Step three</Text>
                     <Text style={styles.notificationHeading}>This is the whole app.</Text>
@@ -109,7 +114,7 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
                     <Text style={styles.primaryButtonText}>Turn on notifications</Text>
                 </PressableScale>
                 <PressableScale
-                    onPress={onSignUpPress}
+                    onPress={onContinue}
                     style={({ pressed }) => [
                         styles.secondaryButton,
                         pressed && styles.secondaryButtonPressed,
@@ -117,6 +122,8 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
                 >
                     <Text style={styles.secondaryButtonText}>Continue</Text>
                 </PressableScale>
+                {/* CHANGED: guarded - see Topic.js */}
+                {onSignInPress && (
                 <PressableScale
                     onPress={onSignInPress}
                     style={({ pressed }) => [
@@ -126,6 +133,7 @@ export default function NotificationScreen({ onSignInPress, onSignUpPress, onBac
                 >
                     <Text style={styles.resendButtonText}>Already have an account? Sign in</Text>
                 </PressableScale>
+                )}
             </View>
         </KeyboardAvoidingView>
     )

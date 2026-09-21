@@ -5,7 +5,7 @@ import { FadeIn, PressableScale } from '../../components/Motion';
 import { daisy } from '../../assets/mascots';
 
 
-export default function WelcomeScreen({ onSignInPress , onGoToTopic})
+export default function WelcomeScreen({ onSignInPress , onGetStarted})
 {
     return (
         <KeyboardAvoidingView
@@ -31,7 +31,7 @@ export default function WelcomeScreen({ onSignInPress , onGoToTopic})
             </View>
             <FadeIn delay={220} style={styles.actions}>
                 <PressableScale
-                    onPress={onGoToTopic}
+                    onPress={onGetStarted}
                     style={({ pressed }) => [
                         styles.primaryButton,
                         pressed && styles.primaryButtonPressed,

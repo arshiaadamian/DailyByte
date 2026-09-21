@@ -1,87 +1,27 @@
 import { useState } from 'react';
-import { Text } from 'react-native';
 
 // import onbaording screens
 import WelcomeScreen from './Welcome';
-import TopicScreen from './Topic';
-import ScheduleScreen from './Schedule';
-import NotificationScreen from './Notification';
 import SignUpScreen from './SignUp';
 
-
-export default function OnboardingFlow({ onSignInPress, onComplete })
+// this flow is pre-auth only now - welcome, then create an account.
+// The preference steps moved to PreferencesFlow, which runs *after* sign in,
+// once App.js has confirmed the user has no profile row yet. Before, the same
+// component served both the signed-out and the signed-in-without-profile case,
+// so a Google user was sent back through a sign-up screen they'd already passed.
+export default function OnboardingFlow({ onSignInPress })
 {
     const [screen, setScreen] = useState('welcome');
-    const [selectedTopic, setSelectedTopic] = useState('');
-    const [bytesPerDay, setBytesPerDay] = useState(1);
-    const [deliveryTime, setDeliveryTime] = useState({
-        delivery1: null,
-        delivery2: null,
-        delivery3: null
-    });
-    const [timeZone, setTimeZone] = useState('');
-    const [pushToken, setPushToken] = useState('');
 
     if (screen === 'welcome')
     {
         return (
-            <WelcomeScreen onSignInPress={onSignInPress} onGoToTopic={() => setScreen('topic')}/>
+            <WelcomeScreen onSignInPress={onSignInPress} onGetStarted={() => setScreen('signUp')} />
         );
     }
-    else if (screen === 'topic')
-    {
-        return (
-            <>
-                <TopicScreen onSignInPress={onSignInPress} onGoToSchedule={() => setScreen('schedule')} setSelectedTopic={setSelectedTopic} selectedTopic={selectedTopic} />
-            </>
-        );
-    }
-    else if (screen === 'schedule')
-    {
-        return (
-            <> 
-                <ScheduleScreen onSignInPress={onSignInPress}
-                    onGoToNotificationPress={() => setScreen('notification')}
-                    setBytesPerDay={setBytesPerDay}
-                    bytesPerDay={bytesPerDay}
-                    setDeliveryTime={setDeliveryTime}
-                    deliveryTime={deliveryTime}
-                    setTimeZone={setTimeZone}
-                    onBack={() => setScreen('topic')}
-                />
-                {/* {console.log("Delivery time is: ", deliveryTime)}
-                {console.log("after get hours: " , (deliveryTime.delivery1 ? deliveryTime.delivery1.getHours() : "getHours is null"))}
-                {console.log("after get minutes: " , (deliveryTime.delivery1 ? deliveryTime.delivery1.getMinutes() : "getMinutes is null"))}
-                {console.log("user's timezone is: ", timeZone)}
-                {console.log("topics is(from parent): " + selectedTopic)} */}
-            </>
-        )
-    }
-    else if(screen === 'notification')
-    {
-        return (
-            <NotificationScreen 
-                onSignInPress={onSignInPress} onSignUpPress={() => setScreen('signUp')} 
-                onBack={() => setScreen('schedule')}
-                setPushToken={setPushToken}
-            />
-        );
-    }
+
     // this else statement will render the signUp page
-    else
-    {
-        console.log("pushToken: ", pushToken);
-        return (
-            <SignUpScreen 
-                onSignInPress={onSignInPress}
-                selectedTopic={selectedTopic}
-                bytesPerDay={bytesPerDay}
-                deliveryTime={deliveryTime}
-                timeZone={timeZone}
-                pushToken={pushToken}
-                onBack={() => setScreen('notification')}
-            />
-        );
-    }
-    
+    return (
+        <SignUpScreen onSignInPress={onSignInPress} onBack={() => setScreen('welcome')} />
+    );
 }

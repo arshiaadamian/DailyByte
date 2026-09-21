@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { colors, eyebrow, font, radius, shadow, space } from './theme';
 
 const styles = StyleSheet.create({
@@ -9,6 +9,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 28,
     paddingTop: 72,
+    // CHANGED: justifyContent is space-between, so the last child sat flat against
+    // the screen edge - under the home indicator on a notched phone. The only thing
+    // holding it up before was paddingBottom on the sign-in link's text, which the
+    // preference steps no longer render. Same inset the nav bar uses.
+    paddingBottom: Platform.OS === 'ios' ? 34 : 22,
   },
   // Only the welcome screen uses this. Taking the leftover space and centring
   // in it keeps Daisy optically centred instead of leaving a dead gap above
@@ -78,7 +83,6 @@ const styles = StyleSheet.create({
     fontFamily: font.regular,
     fontSize: 14,
     color: colors.inkSoft,
-    paddingBottom: 20,
   },
 
   // --- Step screens (topic / schedule / notification) ---
@@ -384,6 +388,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 28,
     paddingTop: 72,
+    paddingBottom: Platform.OS === 'ios' ? 34 : 22,
   },
   signUpHeading: {
     fontFamily: font.bold,

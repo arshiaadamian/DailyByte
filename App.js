@@ -14,6 +14,8 @@ import SettingsScreen from './screens/Settings';
 
 // import onboarding screens
 import OnboardingFlow from './screens/Onboarding/OnboardingFlow';
+// CHANGED: preference steps for a signed-in user who has no profile row yet
+import PreferencesFlow from './screens/Onboarding/PreferencesFlow';
 // import WelcomeScreen from './screens/Onboarding/Welcome';
 // import TopicScreen from './screens/Onboarding/Topic'
 
@@ -203,13 +205,13 @@ function AppContent() {
     ); 
   }
 
+  // CHANGED: was OnboardingFlow, which ended on a sign-up screen the user had
+  // already passed. PreferencesFlow only collects preferences and then creates
+  // the profile row, so Google and password users land in the same place.
   if (profile === 'none')
   {
     return (
-      <OnboardingFlow 
-        onSignInPress={() => setAuthScreen('signIn')}
-        onComplete={()=> checkAttempt(n => n + 1)}
-      />
+      <PreferencesFlow onComplete={() => setCheckAttempt(n => n + 1)} />
     );
   }
 

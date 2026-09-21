@@ -52,6 +52,7 @@ export default function SettingsScreen()
     const [bytesPerDay, setBytesPerDay] = useState(null);
     const [deliveryTime, setDeliveryTime] = useState(null);
     const [activeSlot, setActiveSlot] = useState(null); // NEW: tracks which delivery-time picker is currently open (like Schedule.js)
+    const [email, setEmail] = useState(null);
 
     // NEW: byte slot numbers, and which ones are locked based on bytesPerDay.
     // Recomputed fresh on every render (same approach as Schedule.js) so it never goes stale.
@@ -174,6 +175,7 @@ export default function SettingsScreen()
                     setTopic(data.message.topic);
                     setBytesPerDay(data.message.bytesPerDay);
                     setDeliveryTime(data.message.deliveryTime);
+                    setEmail(data.message.email)
                 }
             }
             catch (err)
@@ -370,7 +372,7 @@ export default function SettingsScreen()
 
                 <View style={styles.card}>
                     <Text style={styles.label}>Signed in as</Text>
-                    <Text style={styles.value}>{user?.signInDetails?.loginId ?? '-'}</Text>
+                    <Text style={styles.value}>{email ?? '-'}</Text>
                 </View>
                 <View style={styles.signOutArea}>
                     <PressableScale

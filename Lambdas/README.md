@@ -10,8 +10,9 @@ what is actually running, so keep this folder in sync after every change.
 
 | File | Trigger | What it does |
 |---|---|---|
-| `GenerateSingleByte.mjs` | EventBridge Scheduler (per user, per slot), `PostConfirmation`, API Gateway `POST /bytes/generate` | Reads the user's topic and recent byte titles, calls Bedrock, writes one byte to DynamoDB |
-| `PostConfirmation.mjs` | Cognito post-confirmation trigger | Creates the user row from onboarding preferences, generates a first byte, creates delivery schedules |
+| `GenerateSingleByte.mjs` | EventBridge Scheduler (per user, per slot), `CreateUser`, API Gateway `POST /bytes/generate` | Reads the user's topic and recent byte titles, calls Bedrock, writes one byte to DynamoDB |
+| `CreateUser.mjs` | API Gateway `POST /user` | Creates the user row from onboarding preferences, generates a first byte, creates delivery schedules |
+| `PostConfirmation.mjs` | Cognito post-confirmation trigger | No-op. Superseded by `CreateUser` — detach the trigger and delete |
 | `UpdatePreferences.mjs` | API Gateway `PATCH /user/preferences` | Updates topic / bytesPerDay / deliveryTime, and rebuilds schedules when timing changes |
 | `GetUserInformation.mjs` | API Gateway `GET /user/information` | Returns the user's current preferences |
 | `GetTodaysByte.mjs` | API Gateway `GET /bytes/today` | Returns the most recent byte |
@@ -37,7 +38,7 @@ Schedule names: `{userId}_{slotIndex}` — slot index is 0-based, max 3 per user
 
 Each schedule targets `GenerateSingleByte` with `{"userId": "..."}` as its input,
 and uses `ScheduleExpressionTimezone` so cron times are interpreted in the user's
-local timezone. Schedules are created in `PostConfirmation` and rebuilt in
+local timezone. Schedules are created in `CreateUser` and rebuilt in
 `UpdatePreferences` using delete-then-create, which is idempotent and cannot leave
 orphaned slots behind.
 
@@ -55,15 +56,18 @@ produce working links.
 
 - **`DailyBytes-DailyByteGenerationScheduler`** — assumed by `scheduler.amazonaws.com`,
   allows `lambda:InvokeFunction` on `GenerateSingleByte`
-- `PostConfirmation` and `UpdatePreferences` execution roles need
+- `CreateUser` and `UpdatePreferences` execution roles need
   `scheduler:CreateSchedule`, `scheduler:DeleteSchedule`, and `iam:PassRole` on the
   role above
-- `PostConfirmation` also needs `lambda:InvokeFunction` on `GenerateSingleByte`
+- `CreateUser` also needs `lambda:InvokeFunction` on `GenerateSingleByte` and
+  `dynamodb:PutItem` on `DailyBytes-Users`
 
 ## Gotchas
 
 - `PostConfirmation` must `return event` or Cognito never completes signup
 - It must not throw — a failure there blocks the user's confirmation entirely
-- It also fires on password-reset confirmations, which send no `clientMetadata`
-- `clientMetadata` values must be strings; numbers and arrays need converting
+- Cognito fires `PreSignUp_ExternalProvider`, **not** `PostConfirmation`, for Google
+  users — which is why profile creation had to move to an API call
+- `CreateUser` creates the row with `attribute_not_exists(userId)` and returns 200 on
+  a duplicate, so the client can safely retry
 - Cognito's built-in email sender is capped at 50/day — SES setup is required before launch

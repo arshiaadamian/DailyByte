@@ -1,15 +1,18 @@
-import { View, Text, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
+import { View, Text, KeyboardAvoidingView, TextInput, Platform, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../../style/Onboarding.styles';
 import { Daisy } from '../../components/Mascot';
 import { FadeIn, PressableScale } from '../../components/Motion';
 import { daisy } from '../../assets/mascots';
 
-export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay, deliveryTime, timeZone, onBack, pushToken})
+// CHANGED: the preference props are gone. This screen creates the Cognito account
+// and nothing else - PreferencesFlow collects topic/schedule/notifications after
+// sign in and creates the DynamoDB row over POST /user.
+export default function SignUpScreen({ onSignInPress, onBack })
 {
-    const { signUp, confirmSignUp, resendCode } = useAuth();
+    const { signUp, confirmSignUp, resendCode, loginWithGoogle } = useAuth();
 
     const [submitting, setSubmitting] = useState(false);
     const [email, setEmail] = useState('');
@@ -21,17 +24,19 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const deliveryHours = [deliveryTime.delivery1, deliveryTime.delivery2, deliveryTime.delivery3]
-        .filter(delivery => delivery !== null)
-        .map(delivery => ({ hour: delivery.getHours(),  minute: delivery.getMinutes()}));
-
-    const clientMetadata = {
-        selectedTopic: selectedTopic,
-        bytesPerDay: String(bytesPerDay), 
-        deliveryTime: JSON.stringify(deliveryHours),
-        timeZone: timeZone,
-        pushToken: pushToken
-    }
+    // CHANGED: signInWithRedirect hands off to the browser, so submitting has to stay
+    // true past the call - the old finally cleared it the moment the browser opened.
+    // Nothing fires if the user backs out of Google instead of finishing, so the
+    // button is re-enabled when the app comes back to the foreground.
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (state) => {
+            if (state === 'active')
+            {
+                setSubmitting(false);
+            }
+        });
+        return () => subscription.remove();
+    }, []);
 
     async function handleSignUp()
     {
@@ -92,7 +97,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
         {
             setError(null);
             setSubmitting(true);
-            await confirmSignUp(email, code, clientMetadata);
+            await confirmSignUp(email, code);
             setSubmitting(false);
         }
         catch (err)
@@ -100,6 +105,21 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
             setSubmitting(false);
             setError(err.message ?? 'Error with the confirmation code');
             return;
+        }
+    }
+
+    async function handleGoogleSignUp()
+    {
+        try
+        {
+            setError(null);
+            setSubmitting(true);
+            await loginWithGoogle();
+        }
+        catch (err)
+        {
+            setSubmitting(false);
+            setError(err.message ?? "Could not sign up with Google");
         }
     }
 
@@ -239,6 +259,20 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             <Text style={styles.buttonText}>
                                 {submitting ? 'Signing up…' : 'Sign up'}
                             </Text>
+                        </PressableScale>
+
+                        {/* CHANGED: Google sign up. Lands in the same signedIn state as a
+                            password signup, so App.js sends it through PreferencesFlow too. */}
+                        <PressableScale
+                            onPress={handleGoogleSignUp}
+                            disabled={submitting}
+                            style={({ pressed }) => [
+                                styles.button,
+                                pressed && styles.buttonPressed,
+                                submitting && styles.buttonDisabled,
+                            ]}
+                        >
+                            <Text style={styles.buttonText}>Continue with Google</Text>
                         </PressableScale>
 
                         <PressableScale

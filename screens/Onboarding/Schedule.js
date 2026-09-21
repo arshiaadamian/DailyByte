@@ -128,6 +128,10 @@ export default function ScheduleScreen({
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.scheduleTop}>
+                <View style={styles.progressTrack}>
+                    <View style={styles.progressFill} />
+                </View>
+
                 <PressableScale
                     onPress={onBack}
                     style={({ pressed }) => [
@@ -135,14 +139,8 @@ export default function ScheduleScreen({
                         pressed && styles.backButtonPressed,
                     ]}
                 >
-                    <Text style={styles.backButtonText}>
-                    back
-                    </Text>
+                    <Text style={styles.backButtonText}>Back</Text>
                 </PressableScale>
-
-                <View style={styles.progressTrack}>
-                    <View style={styles.progressFill} />
-                </View>
 
                 <FadeIn style={styles.stepHeader}>
                     <View style={styles.stepHeaderText}>
@@ -228,6 +226,8 @@ export default function ScheduleScreen({
                     <Text style={styles.primaryButtonText}>Continue</Text>
                 </PressableScale>
 
+                {/* CHANGED: guarded - see Topic.js */}
+                {onSignInPress && (
                 <PressableScale
                     onPress={onSignInPress}
                     style={({ pressed }) => [
@@ -237,6 +237,7 @@ export default function ScheduleScreen({
                 >
                     <Text style={styles.resendButtonText}>Already have an account? Sign in</Text>
                 </PressableScale>
+                )}
             </View>
         </KeyboardAvoidingView>
     )

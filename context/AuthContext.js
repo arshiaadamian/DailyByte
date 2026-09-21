@@ -64,10 +64,14 @@ export function AuthProvider({ children }) // children is a special prop, it is 
                 console.log("OAuth failed: ", data.payload.data);
                 setStatus('signedOut');
             }
-
-            const unsubscribe = Hub.listen('auth', handleAuthEvent);
-            return unsubscribe;
         }
+
+        // CHANGED: these two lines used to sit inside handleAuthEvent, so nothing
+        // ever subscribed - the handler could only run if it was already running.
+        // Google sign in only appeared to work because the next app launch picked
+        // the persisted session up through getCurrentUser above.
+        const unsubscribe = Hub.listen('auth', handleAuthEvent);
+        return unsubscribe;
     }, [])
 
     async function signIn(email, password)
@@ -94,9 +98,11 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         });
     }
 
-    async function confirmSignUp(email, code, clientMetadata)
+    // CHANGED: clientMetadata dropped. The profile row is created by POST /user
+    // after onboarding now, not by the PostConfirmation trigger.
+    async function confirmSignUp(email, code)
     {
-        await amplifyConfirmSignUp( {username: email, confirmationCode: code, options: {clientMetadata} });
+        await amplifyConfirmSignUp( {username: email, confirmationCode: code });
         await amplifyAutoSignIn();
         const currentUser = await getCurrentUser();
         setUser(currentUser);

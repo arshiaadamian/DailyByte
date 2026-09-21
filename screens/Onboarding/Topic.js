@@ -81,6 +81,9 @@ export default function TopicScreen({ onSignInPress, setSelectedTopic, selectedT
                 >
                     <Text style={styles.primaryButtonText}>Continue</Text>
                 </PressableScale>
+                {/* CHANGED: guarded - this step now also runs after sign in, where a
+                    "sign in" link would be nonsense. PreferencesFlow passes no handler. */}
+                {onSignInPress && (
                 <PressableScale
                     onPress={onSignInPress}
                     scaleTo={0.98}
@@ -91,6 +94,7 @@ export default function TopicScreen({ onSignInPress, setSelectedTopic, selectedT
                 >
                     <Text style={styles.resendButtonText}>Already have an account? Sign in</Text>
                 </PressableScale>
+                )}
             </View>
         </KeyboardAvoidingView>
     )

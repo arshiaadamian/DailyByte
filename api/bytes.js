@@ -6,6 +6,7 @@ const GENERATE_SINGLE_BYTE = `${API_BASE}/bytes/generate`;
 const UPDATE_PREFERENCES = `${API_BASE}/user/preferences`;
 const USER_INFORMATION = `${API_BASE}/user/information`;
 const SAVE_TOKEN =`${API_BASE}/user/savetoken`
+const CREATE_USER = `${API_BASE}/user/create`
 
 export async function getUserInformation(token)
 {
@@ -22,6 +23,29 @@ export async function getUserInformation(token)
     }
 
     if (!response.ok) // build in property of Fetch API's response, response.ok returns true if the statusCode header is in the range of 200-299
+    {
+        const detail = await response.text();
+        const message = JSON.parse(detail).message;
+        throw new Error(`${message}`);
+    }
+
+    return response.json();
+}
+
+// creates the DynamoDB row for the signed-in user. userId and email come from the
+// JWT on the Lambda side, so only the onboarding answers go in the body.
+export async function createUser(token, reqBody)
+{
+    const response = await fetch(CREATE_USER, {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqBody)
+    });
+
+    if (!response.ok)
     {
         const detail = await response.text();
         const message = JSON.parse(detail).message;
