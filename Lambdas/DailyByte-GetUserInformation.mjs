@@ -21,6 +21,19 @@ export const handler = async (event) => {
 
     const response = await docClient.send(command);
     const item = response.Items[0];
+
+    // return 404 if a user does not exist
+    if (!item)
+    {
+      return {
+        statusCode: 404,
+        headers: 
+        {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({message: "No profile found"})
+      }
+    }
     
     const information = {
       active: item.active,
@@ -33,7 +46,6 @@ export const handler = async (event) => {
     };
 
     // return information;
-
     return {
       statusCode: 200,
       headers:

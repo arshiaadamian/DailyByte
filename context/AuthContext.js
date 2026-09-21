@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getCurrentUser, signIn as amplifySignIn, signOut as amplifySignOut, signUp as amplifySignUp,fetchAuthSession, confirmSignUp as amplifyConfirmSignUp, resendSignUpCode as amplifyResendCode, autoSignIn as amplifyAutoSignIn, resetPassword as amplifyResetPassword, confirmResetPassword as amplifyConfirmResetPassword } from 'aws-amplify/auth';
+import { getCurrentUser, signIn as amplifySignIn, signOut as amplifySignOut, signUp as amplifySignUp,fetchAuthSession, confirmSignUp as amplifyConfirmSignUp, resendSignUpCode as amplifyResendCode, autoSignIn as amplifyAutoSignIn, resetPassword as amplifyResetPassword, confirmResetPassword as amplifyConfirmResetPassword, signInWithRedirect } from 'aws-amplify/auth';
+import { Hub } from 'aws-amplify/utils';
 
 const AuthContext = createContext(null); // auth context variable, called an empty channel
 
@@ -38,6 +39,36 @@ export function AuthProvider({ children }) // children is a special prop, it is 
             }
         )
     }, []);
+
+    useEffect(() => {
+        async function handleAuthEvent(data)
+        {
+            const event = data.payload.event; // amplify sends this, e.g. signInWithRedirect
+
+            if (event === 'signInWithRedirect')
+            {
+                try 
+                {
+                    const currentUser = await getCurrentUser();
+                    setUser(currentUser);
+                    setStatus('signedIn');
+                }
+                catch (err)
+                {
+                    console.log("Post-redirect session load failed: ", err.message);
+                    setStatus('signedOut');
+                }
+            }
+            else if (event === 'signInWithRedirect_failure')
+            {
+                console.log("OAuth failed: ", data.payload.data);
+                setStatus('signedOut');
+            }
+
+            const unsubscribe = Hub.listen('auth', handleAuthEvent);
+            return unsubscribe;
+        }
+    }, [])
 
     async function signIn(email, password)
     {
@@ -93,8 +124,13 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         return session.tokens?.idToken?.toString();
     }
 
+    async function loginWithGoogle()
+    {
+        await signInWithRedirect({ provider: 'Google' });
+    }
+
     return (
-        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken, resetPassword, confirmResetPassword}} >
+        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken, resetPassword, confirmResetPassword, loginWithGoogle}} >
             {children}
         </AuthContext.Provider>
     );

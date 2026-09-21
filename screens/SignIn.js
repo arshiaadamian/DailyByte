@@ -10,7 +10,7 @@ import { daisy } from '../assets/mascots';
 
 export default function SignInScreen({ onSignUpPress, onResetPress }) {
 
-    const { signIn, getIdToken } = useAuth();
+    const { signIn, loginWithGoogle } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -42,6 +42,27 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
             setSubmitting(false);
         }
     }
+
+    async function handleGoogleSignIn()
+    {
+        try 
+        {
+            setError(null);
+            setSubmitting(true);
+            await loginWithGoogle();
+        }
+        catch (err)
+        {
+            setSubmitting(false);
+            setError("Error with handleGoogleSignIn, " + err.message);
+        }
+        finally
+        {
+            setSubmitting(false);
+        }
+    }
+
+    
 
     return (
         <KeyboardAvoidingView
@@ -108,6 +129,19 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     ? <ActivityIndicator color="#E1DED3" />
                     : <Text style={styles.buttonText}>Sign in</Text>}
                 </PressableScale>
+                
+                {/* Google sign in */}
+                <PressableScale
+                    onPress={handleGoogleSignIn}
+                    style={({ pressed }) => [
+                        styles.button,
+                        pressed && styles.buttonPressed,
+                        submitting && styles.buttonDisabled,
+                    ]}
+                >
+                    <Text style={styles.buttonText}>Google Sign in</Text>
+                </PressableScale>
+
                 <PressableScale
                     onPress={onSignUpPress}
                     style={({ pressed }) => [
@@ -116,9 +150,8 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Don't have an account? Sign up</Text>
+                    
                 </PressableScale>
-
-                
                 <PressableScale
                     onPress={onResetPress}
                     style={({ pressed }) => [
