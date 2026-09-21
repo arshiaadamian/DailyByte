@@ -205,7 +205,12 @@ function AppContent() {
 
   if (profile === 'none')
   {
-    return <OnboardingFlow onSignInPress={() => setAuthScreen('signIn')} />;
+    return (
+      <OnboardingFlow 
+        onSignInPress={() => setAuthScreen('signIn')}
+        onComplete={()=> checkAttempt(n => n + 1)}
+      />
+    );
   }
 
   if (profile === 'error')

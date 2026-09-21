@@ -9,7 +9,7 @@ import NotificationScreen from './Notification';
 import SignUpScreen from './SignUp';
 
 
-export default function OnboardingFlow({ onSignInPress })
+export default function OnboardingFlow({ onSignInPress, onComplete })
 {
     const [screen, setScreen] = useState('welcome');
     const [selectedTopic, setSelectedTopic] = useState('');

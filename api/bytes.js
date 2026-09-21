@@ -16,6 +16,11 @@ export async function getUserInformation(token)
         }
     });
 
+    if (response.status === 404)
+    {
+        return null;
+    }
+
     if (!response.ok) // build in property of Fetch API's response, response.ok returns true if the statusCode header is in the range of 200-299
     {
         const detail = await response.text();
