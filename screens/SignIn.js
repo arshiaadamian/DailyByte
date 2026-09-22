@@ -7,11 +7,12 @@ import { Daisy } from '../components/Mascot';
 import { FadeIn, PressableScale } from '../components/Motion';
 import { daisy } from '../assets/mascots';
 import GoogleLogo from '../components/GoogleLogo';
+import AppleLogo from '../components/AppleLogo';
 
 
 export default function SignInScreen({ onSignUpPress, onResetPress }) {
 
-    const { signIn, loginWithGoogle } = useAuth();
+    const { signIn, loginWithGoogle, loginWithApple } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -70,6 +71,21 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
         {
             setSubmitting(false);
             setError("Error with handleGoogleSignIn, " + err.message);
+        }
+    }
+
+    async function handleAppleSignIn()
+    {
+        try
+        {
+            setError(null);
+            setSubmitting(true);
+            await loginWithApple();
+        }
+        catch (err)
+        {
+            setSubmitting(false);
+            setError("Error with handleAppleSignIn, " + err.message);
         }
     }
 
@@ -146,13 +162,27 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     onPress={handleGoogleSignIn}
                     style={({ pressed }) => [
                         styles.button,
-                        styles.googleButton,
+                        styles.oauthButton,
                         pressed && styles.buttonPressed,
                         submitting && styles.buttonDisabled,
                     ]}
                 >
-                    <GoogleLogo size={18} style={styles.googleLogo} />
+                    <GoogleLogo size={18} style={styles.oauthLogo} />
                     <Text style={styles.buttonText}>Google Sign in</Text>
+                </PressableScale>
+
+                {/* Apple sign in */}
+                <PressableScale
+                    onPress={handleAppleSignIn}
+                    style={({ pressed }) => [
+                        styles.button,
+                        styles.oauthButton,
+                        pressed && styles.buttonPressed,
+                        submitting && styles.buttonDisabled,
+                    ]}
+                >
+                    <AppleLogo size={18} style={styles.oauthLogo} />
+                    <Text style={styles.buttonText}>Apple Sign in</Text>
                 </PressableScale>
 
                 <PressableScale

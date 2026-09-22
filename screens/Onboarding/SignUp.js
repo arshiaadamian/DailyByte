@@ -7,13 +7,14 @@ import { Daisy } from '../../components/Mascot';
 import { FadeIn, PressableScale } from '../../components/Motion';
 import { daisy } from '../../assets/mascots';
 import GoogleLogo from '../../components/GoogleLogo';
+import AppleLogo from '../../components/AppleLogo';
 
 // CHANGED: the preference props are gone. This screen creates the Cognito account
 // and nothing else - PreferencesFlow collects topic/schedule/notifications after
 // sign in and creates the DynamoDB row over POST /user.
 export default function SignUpScreen({ onSignInPress, onBack })
 {
-    const { signUp, confirmSignUp, resendCode, loginWithGoogle } = useAuth();
+    const { signUp, confirmSignUp, resendCode, loginWithGoogle, loginWithApple } = useAuth();
 
     const [submitting, setSubmitting] = useState(false);
     const [email, setEmail] = useState('');
@@ -121,6 +122,21 @@ export default function SignUpScreen({ onSignInPress, onBack })
         {
             setSubmitting(false);
             setError(err.message ?? "Could not sign up with Google");
+        }
+    }
+
+    async function handleAppleSignUp()
+    {
+        try
+        {
+            setError(null);
+            setSubmitting(true);
+            await loginWithApple();
+        }
+        catch (err)
+        {
+            setSubmitting(false);
+            setError(err.message ?? "Could not sign up with Apple");
         }
     }
 
@@ -269,13 +285,27 @@ export default function SignUpScreen({ onSignInPress, onBack })
                             disabled={submitting}
                             style={({ pressed }) => [
                                 styles.button,
-                                styles.googleButton,
+                                styles.oauthButton,
                                 pressed && styles.buttonPressed,
                                 submitting && styles.buttonDisabled,
                             ]}
                         >
-                            <GoogleLogo size={18} style={styles.googleLogo} />
+                            <GoogleLogo size={18} style={styles.oauthLogo} />
                             <Text style={styles.buttonText}>Continue with Google</Text>
+                        </PressableScale>
+
+                        <PressableScale
+                            onPress={handleAppleSignUp}
+                            disabled={submitting}
+                            style={({ pressed }) => [
+                                styles.button,
+                                styles.oauthButton,
+                                pressed && styles.buttonPressed,
+                                submitting && styles.buttonDisabled,
+                            ]}
+                        >
+                            <AppleLogo size={18} style={styles.oauthLogo} />
+                            <Text style={styles.buttonText}>Continue with Apple</Text>
                         </PressableScale>
 
                         <PressableScale

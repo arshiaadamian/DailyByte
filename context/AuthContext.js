@@ -135,8 +135,13 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         await signInWithRedirect({ provider: 'Google' });
     }
 
+    async function loginWithApple()
+    {
+        await signInWithRedirect({ provider: 'Apple' });
+    }
+
     return (
-        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken, resetPassword, confirmResetPassword, loginWithGoogle}} >
+        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken, resetPassword, confirmResetPassword, loginWithGoogle, loginWithApple}} >
             {children}
         </AuthContext.Provider>
     );

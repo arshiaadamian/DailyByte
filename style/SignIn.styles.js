@@ -93,12 +93,13 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.5,
   },
-  // The mark sits beside the label, so this button lays out as a row.
-  googleButton: {
+  // A provider's mark sits beside the label, so these buttons lay out as a row.
+  oauthButton: {
     flexDirection: 'row',
   },
-  googleLogo: {
+  oauthLogo: {
     marginRight: 10,
+    transform: [{ translateY: -1.5 }],
   },
 
   buttonText: {

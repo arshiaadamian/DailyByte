@@ -1,6 +1,6 @@
 // CHANGED: added Platform import, needed by handleTimeChange below (it was used but never imported before)
 // CHANGED: added ScrollView so the page can scroll instead of squeezing/pushing the buttons off screen
-import {View, Text, TextInput, ActivityIndicator, Platform, ScrollView} from 'react-native';
+import {View, Text, TextInput, ActivityIndicator, Platform, ScrollView, Alert} from 'react-native';
 import styles from '../style/Settings.styles';
 import { Daisy } from '../components/Mascot';
 import { FadeIn, PressableScale } from '../components/Motion';
@@ -12,7 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 // update preference API
-import { updatePreferences, getUserInformation } from '../api/bytes';
+import { updatePreferences, getUserInformation, deleteUser } from '../api/bytes';
 
 
 
@@ -45,6 +45,7 @@ export default function SettingsScreen()
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [loading, setLoading] = useState(true);
     
     // update preferences
@@ -100,6 +101,39 @@ export default function SettingsScreen()
         {
             setSubmitting(false);
             setError(err.message ?? 'Could not sign out');
+        }
+    }
+
+    // irreversible, so it asks first. The native alert is the convention users
+    // already recognise for this.
+    function handleDeleteAccount()
+    {
+        Alert.alert(
+            'Delete account',
+            'This permanently deletes your account, your preferences and your scheduled bytes. This cannot be undone.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Delete', style: 'destructive', onPress: confirmDeleteAccount }
+            ]
+        );
+    }
+
+    async function confirmDeleteAccount()
+    {
+        try
+        {
+            setDeleting(true);
+            setError(null);
+            const idToken = await getIdToken();
+            await deleteUser(idToken);
+            // the Cognito account is gone, so drop the stored session too -
+            // App.js falls back to the signed-out screens on the next render
+            await signOut();
+        }
+        catch (err)
+        {
+            setDeleting(false);
+            setError(err.message ?? 'Could not delete your account');
         }
     }
 
@@ -377,15 +411,30 @@ export default function SettingsScreen()
                 <View style={styles.signOutArea}>
                     <PressableScale
                         onPress={handleSignOut}
-                        disabled={submitting}
+                        disabled={submitting || deleting}
                         style={({ pressed }) => [
                             styles.button,
                             pressed && styles.buttonPressed,
-                            submitting && styles.buttonDisabled,
+                            (submitting || deleting) && styles.buttonDisabled,
                         ]}
                     >
                         <Text style={styles.buttonText}>
                             {submitting ? 'Signing out…' : 'Sign out'}
+                        </Text>
+                    </PressableScale>
+                </View>
+                <View style={styles.deleteArea}>
+                    <PressableScale
+                        onPress={handleDeleteAccount}
+                        disabled={submitting || deleting}
+                        style={({ pressed }) => [
+                            styles.deleteButton,
+                            pressed && styles.deleteButtonPressed,
+                            (submitting || deleting) && styles.buttonDisabled,
+                        ]}
+                    >
+                        <Text style={styles.deleteButtonText}>
+                            {deleting ? 'Deleting…' : 'Delete account'}
                         </Text>
                     </PressableScale>
                 </View>

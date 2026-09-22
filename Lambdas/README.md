@@ -12,6 +12,7 @@ what is actually running, so keep this folder in sync after every change.
 |---|---|---|
 | `GenerateSingleByte.mjs` | EventBridge Scheduler (per user, per slot), `CreateUser`, API Gateway `POST /bytes/generate` | Reads the user's topic and recent byte titles, calls Bedrock, writes one byte to DynamoDB |
 | `CreateUser.mjs` | API Gateway `POST /user` | Creates the user row from onboarding preferences, generates a first byte, creates delivery schedules |
+| `DeleteAccount.mjs` | API Gateway `DELETE /user/delete` | Deletes the user's delivery schedules, bytes, profile row and Cognito account, in that order |
 | `PostConfirmation.mjs` | Cognito post-confirmation trigger | No-op. Superseded by `CreateUser` — detach the trigger and delete |
 | `UpdatePreferences.mjs` | API Gateway `PATCH /user/preferences` | Updates topic / bytesPerDay / deliveryTime, and rebuilds schedules when timing changes |
 | `GetUserInformation.mjs` | API Gateway `GET /user/information` | Returns the user's current preferences |
@@ -61,6 +62,9 @@ produce working links.
   role above
 - `CreateUser` also needs `lambda:InvokeFunction` on `GenerateSingleByte` and
   `dynamodb:PutItem` on `DailyBytes-Users`
+- `DeleteAccount` needs `dynamodb:DeleteItem` on `DailyBytes-Users`,
+  `dynamodb:Query` and `dynamodb:BatchWriteItem` on `DailyByte-Bytes`,
+  `scheduler:DeleteSchedule`, and `cognito-idp:AdminDeleteUser` on the user pool
 
 ## Gotchas
 
@@ -70,4 +74,12 @@ produce working links.
   users — which is why profile creation had to move to an API call
 - `CreateUser` creates the row with `attribute_not_exists(userId)` and returns 200 on
   a duplicate, so the client can safely retry
+- `AdminDeleteUser` takes `cognito:username`, not `sub` — federated users have a
+  prefixed username like `google_1234`
+- `DeleteAccount` removes Cognito last, so a mid-way failure leaves an account that
+  can still sign in and retry rather than unreachable rows
+- `date` is a DynamoDB reserved word — deleting bytes needs an
+  `ExpressionAttributeNames` alias for it
+- `BatchWriteItem` caps at 25 requests and can partially succeed; `DeleteAccount`
+  retries whatever comes back in `UnprocessedItems`
 - Cognito's built-in email sender is capped at 50/day — SES setup is required before launch

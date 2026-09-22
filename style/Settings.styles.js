@@ -80,6 +80,28 @@ const styles = StyleSheet.create({
   signOutArea: {
     marginTop: 0,
   },
+  // Outlined rather than filled, so deleting never competes with Sign out for
+  // the eye - it should look like the deliberate, last-resort action it is.
+  deleteArea: {
+    marginTop: space.md,
+  },
+  deleteButton: {
+    backgroundColor: 'transparent',
+    borderRadius: radius.pill,
+    borderWidth: 1,
+    borderColor: colors.danger,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteButtonPressed: {
+    opacity: 0.55,
+  },
+  deleteButtonText: {
+    fontFamily: font.bold,
+    fontSize: 17,
+    color: colors.danger,
+  },
   button: {
     backgroundColor: colors.brand,
     borderRadius: radius.pill,

@@ -7,6 +7,7 @@ const UPDATE_PREFERENCES = `${API_BASE}/user/preferences`;
 const USER_INFORMATION = `${API_BASE}/user/information`;
 const SAVE_TOKEN =`${API_BASE}/user/savetoken`
 const CREATE_USER = `${API_BASE}/user/create`
+const DELETE_USER = `${API_BASE}/user/delete`
 
 export async function getUserInformation(token)
 {
@@ -23,6 +24,27 @@ export async function getUserInformation(token)
     }
 
     if (!response.ok) // build in property of Fetch API's response, response.ok returns true if the statusCode header is in the range of 200-299
+    {
+        const detail = await response.text();
+        const message = JSON.parse(detail).message;
+        throw new Error(`${message}`);
+    }
+
+    return response.json();
+}
+
+// deletes the delivery schedules, bytes, profile row and Cognito account.
+// identity comes from the JWT, so there is no body.
+export async function deleteUser(token)
+{
+    const response = await fetch(DELETE_USER, {
+        method: "DELETE",
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
+    if (!response.ok)
     {
         const detail = await response.text();
         const message = JSON.parse(detail).message;
