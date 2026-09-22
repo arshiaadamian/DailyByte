@@ -1,5 +1,5 @@
-import { StyleSheet, Platform } from "react-native";
-import { colors, radius, shadow } from "./theme";
+import { StyleSheet } from "react-native";
+import { colors, radius, shadow, SAFE_BOTTOM } from "./theme";
 
 const styles = StyleSheet.create({
     // Floats over the active screen rather than taking a row in the layout.
@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: Platform.OS === 'ios' ? 34 : 22,
+        bottom: SAFE_BOTTOM,
         alignItems: 'center',
     },
     bar: {

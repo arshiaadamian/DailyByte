@@ -6,6 +6,7 @@ import styles from '../style/SignIn.styles';
 import { Daisy } from '../components/Mascot';
 import { FadeIn, PressableScale } from '../components/Motion';
 import { daisy } from '../assets/mascots';
+import GoogleLogo from '../components/GoogleLogo';
 
 
 export default function SignInScreen({ onSignUpPress, onResetPress }) {
@@ -145,10 +146,12 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     onPress={handleGoogleSignIn}
                     style={({ pressed }) => [
                         styles.button,
+                        styles.googleButton,
                         pressed && styles.buttonPressed,
                         submitting && styles.buttonDisabled,
                     ]}
                 >
+                    <GoogleLogo size={18} style={styles.googleLogo} />
                     <Text style={styles.buttonText}>Google Sign in</Text>
                 </PressableScale>
 

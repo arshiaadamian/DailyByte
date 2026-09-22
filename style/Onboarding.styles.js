@@ -1,5 +1,5 @@
-import { Platform, StyleSheet } from 'react-native';
-import { colors, eyebrow, font, radius, shadow, space } from './theme';
+import { StyleSheet } from 'react-native';
+import { colors, eyebrow, font, radius, shadow, space, SAFE_BOTTOM } from './theme';
 
 const styles = StyleSheet.create({
   screen: {
@@ -9,11 +9,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 28,
     paddingTop: 72,
-    // CHANGED: justifyContent is space-between, so the last child sat flat against
-    // the screen edge - under the home indicator on a notched phone. The only thing
-    // holding it up before was paddingBottom on the sign-in link's text, which the
-    // preference steps no longer render. Same inset the nav bar uses.
-    paddingBottom: Platform.OS === 'ios' ? 34 : 22,
+    // No paddingBottom here on purpose. This style belongs to a KeyboardAvoidingView,
+    // and behavior="padding" composes its own paddingBottom over whatever is set -
+    // zero while the keyboard is closed. The bottom inset lives on `actions` instead,
+    // as a margin, which nothing overwrites.
   },
   // Only the welcome screen uses this. Taking the leftover space and centring
   // in it keeps Daisy optically centred instead of leaving a dead gap above
@@ -46,6 +45,9 @@ const styles = StyleSheet.create({
   actions: {
     width: '86%',
     alignItems: 'center',
+    // justifyContent is space-between, so this block is the last thing on the
+    // screen - it carries the clearance for the home indicator itself.
+    marginBottom: SAFE_BOTTOM,
   },
   primaryButton: {
     width: '100%',
@@ -88,6 +90,7 @@ const styles = StyleSheet.create({
   // --- Step screens (topic / schedule / notification) ---
   scheduleTop: {
     width: '100%',
+    flexShrink: 1,
   },
   // Header row that pairs the step's heading with a Daisy pose.
   stepHeader: {
@@ -118,7 +121,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     overflow: 'hidden',
     backgroundColor: colors.canvasDeep,
-    marginBottom: 28,
+    marginBottom: 20,
   },
   progressFill: {
     width: '55%',
@@ -265,6 +268,7 @@ const styles = StyleSheet.create({
   // --- Notification step ---
   notificationTop: {
     width: '100%',
+    flexShrink: 1,
   },
   notificationHeading: {
     fontFamily: font.bold,
@@ -279,7 +283,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 27,
     color: colors.inkSoft,
-    marginBottom: 26,
+    marginBottom: 20,
   },
   // The stage takes whatever vertical room is left over, so the mockup scales
   // to the device instead of being pinned to one hard-coded height.
@@ -288,7 +292,7 @@ const styles = StyleSheet.create({
   notificationStage: {
     width: '100%',
     marginTop: 6,
-    marginBottom: 42,
+    marginBottom: 28,
   },
   // Keeps the source image's own proportions. The fill is sampled from the
   // artwork's own corners so the shadow has a solid rounded shape to cast from
@@ -388,7 +392,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 28,
     paddingTop: 72,
-    paddingBottom: Platform.OS === 'ios' ? 34 : 22,
+    paddingBottom: SAFE_BOTTOM,
   },
   signUpHeading: {
     fontFamily: font.bold,
@@ -455,6 +459,14 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.5,
   },
+  // The mark sits beside the label, so this button lays out as a row.
+  googleButton: {
+    flexDirection: 'row',
+  },
+  googleLogo: {
+    marginRight: 10,
+  },
+
   buttonText: {
     fontFamily: font.bold,
     fontSize: 17,

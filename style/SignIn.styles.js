@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { colors, eyebrow, font, radius, shadow, space } from './theme';
+import { colors, eyebrow, font, radius, shadow, space, SAFE_BOTTOM } from './theme';
 
 const styles = StyleSheet.create({
   screen: {
@@ -9,7 +9,11 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
-    padding: 26,
+    paddingHorizontal: 26,
+    paddingTop: 26,
+    // the flat 26 sat inside the home indicator once the Google button and the
+    // two links stacked up below the form
+    paddingBottom: SAFE_BOTTOM,
   },
   // Daisy sits above the wordmark on the sign-in screen.
   brandMark: {
@@ -89,6 +93,14 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.5,
   },
+  // The mark sits beside the label, so this button lays out as a row.
+  googleButton: {
+    flexDirection: 'row',
+  },
+  googleLogo: {
+    marginRight: 10,
+  },
+
   buttonText: {
     fontFamily: font.bold,
     fontSize: 17,

@@ -1,6 +1,8 @@
 // Shared design tokens for DailyByte.
 // Purely visual - nothing here knows about data, navigation or state.
 
+import { Platform } from 'react-native';
+
 export const colors = {
   // Backdrops
   canvas: '#E1DED3',       // the warm greige the whole app sits on
@@ -94,4 +96,9 @@ export const eyebrow = {
 // Screens reserve this much room so nothing hides underneath it.
 export const NAV_CLEARANCE = 116;
 
-export default { colors, font, radius, space, shadow, eyebrow, NAV_CLEARANCE };
+// The home indicator lives in the bottom inset. Screens WITHOUT the nav bar -
+// sign in, reset password, onboarding - reserve this so their last button or
+// link never lands on it. The nav bar floats at the same height.
+export const SAFE_BOTTOM = Platform.OS === 'ios' ? 34 : 22;
+
+export default { colors, font, radius, space, shadow, eyebrow, NAV_CLEARANCE, SAFE_BOTTOM };

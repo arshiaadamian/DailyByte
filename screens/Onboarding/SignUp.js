@@ -6,6 +6,7 @@ import styles from '../../style/Onboarding.styles';
 import { Daisy } from '../../components/Mascot';
 import { FadeIn, PressableScale } from '../../components/Motion';
 import { daisy } from '../../assets/mascots';
+import GoogleLogo from '../../components/GoogleLogo';
 
 // CHANGED: the preference props are gone. This screen creates the Cognito account
 // and nothing else - PreferencesFlow collects topic/schedule/notifications after
@@ -268,10 +269,12 @@ export default function SignUpScreen({ onSignInPress, onBack })
                             disabled={submitting}
                             style={({ pressed }) => [
                                 styles.button,
+                                styles.googleButton,
                                 pressed && styles.buttonPressed,
                                 submitting && styles.buttonDisabled,
                             ]}
                         >
+                            <GoogleLogo size={18} style={styles.googleLogo} />
                             <Text style={styles.buttonText}>Continue with Google</Text>
                         </PressableScale>
 
