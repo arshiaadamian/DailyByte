@@ -1,0 +1,394 @@
+<title>DailyByte Privacy</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #E1DED3;
+    --surface: #EBE8DF;
+    --rule: #C6BDAB;
+    --ink: #2F2E2C;
+    --body: #5A5546;
+    --muted: #7D7768;
+    --accent: #816148;
+    --accent-soft: #9A7A5E;
+    --on-accent: #F5F2E9;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #23221F;
+      --surface: #2C2B27;
+      --rule: #47443C;
+      --ink: #EDEAE0;
+      --body: #C5BFB1;
+      --muted: #938C7C;
+      --accent: #C4A183;
+      --accent-soft: #A98A6E;
+      --on-accent: #23221F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #23221F;
+    --surface: #2C2B27;
+    --rule: #47443C;
+    --ink: #EDEAE0;
+    --body: #C5BFB1;
+    --muted: #938C7C;
+    --accent: #C4A183;
+    --accent-soft: #A98A6E;
+    --on-accent: #23221F;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--body);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-block: 64px 96px;
+  }
+
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 28px;
+    margin-bottom: 44px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+
+  h1 {
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 6vw, 2.9rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 1.2rem;
+    line-height: 1.55;
+    color: var(--body);
+    margin: 0 0 20px;
+  }
+
+  .dates {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  h2 {
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    color: var(--ink);
+    margin: 52px 0 4px;
+    text-wrap: balance;
+  }
+
+  h2 .num {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--ink);
+    margin: 28px 0 6px;
+  }
+
+  p { margin: 14px 0; }
+
+  a {
+    color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ul { margin: 14px 0; padding-left: 20px; }
+  li { margin: 7px 0; }
+
+  strong { color: var(--ink); font-weight: 600; }
+
+  .summary {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 4px 24px 20px;
+    margin: 40px 0 8px;
+  }
+
+  .summary h2 {
+    margin-top: 24px;
+    font-size: 1.25rem;
+  }
+
+  .tablescroll { overflow-x: auto; margin: 18px 0 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+    min-width: 30rem;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 16px 10px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  td {
+    padding: 12px 16px 12px 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    color: var(--body);
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; }
+
+  .callout {
+    border-left: 2px solid var(--accent);
+    padding: 2px 0 2px 20px;
+    margin: 24px 0;
+  }
+
+  .callout p { margin: 8px 0; }
+
+  .note {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    margin-top: 64px;
+    padding-top: 24px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .contact {
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin: 16px 0 10px;
+  }
+
+  .contact a { color: var(--accent); }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">DailyByte</p>
+    <h1>Privacy Policy</h1>
+    <p class="standfirst">DailyByte sends you one short thing worth knowing each day. To do that it needs to know your email, what you want to learn about, and when to reach you. That is close to everything it stores.</p>
+    <p class="dates">Last updated 21 September 2026 &nbsp;·&nbsp; Effective 21 September 2026</p>
+  </header>
+
+  <div class="summary">
+    <h2>The short version</h2>
+    <p>No advertising, no analytics SDKs, no third-party trackers, and nothing sold or shared for marketing. You can delete your account and everything attached to it from inside the app at any time.</p>
+
+    <div class="tablescroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">What</th>
+            <th scope="col">Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Email address</td>
+            <td>To identify your account and let you sign back in</td>
+          </tr>
+          <tr>
+            <td>Chosen topic</td>
+            <td>To decide what your daily byte is about</td>
+          </tr>
+          <tr>
+            <td>Bytes per day</td>
+            <td>To know how much to send</td>
+          </tr>
+          <tr>
+            <td>Delivery times</td>
+            <td>To send at the times you picked</td>
+          </tr>
+          <tr>
+            <td>Time zone</td>
+            <td>To interpret those times as your local clock</td>
+          </tr>
+          <tr>
+            <td>Push token</td>
+            <td>To deliver notifications to your device</td>
+          </tr>
+          <tr>
+            <td>Your bytes</td>
+            <td>To build your history and avoid repeating itself</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2><span class="num">01</span>Who this covers</h2>
+  <p>DailyByte is an independent app built and operated by a single developer. This policy explains what the app collects, why, where it goes, and what you can do about it. It applies to the DailyByte iOS app and the service behind it.</p>
+
+  <h2><span class="num">02</span>What is collected, and what is not</h2>
+
+  <h3>When you create an account</h3>
+  <p>Your <strong>email address</strong>. If you sign up directly, you give it to us along with a password, which is stored and verified by Amazon Cognito — the app never sees or holds it. If you sign in with Apple or Google, they confirm your identity and pass along your email address; your password stays with them and is never shared with us.</p>
+
+  <p>If you use <strong>Sign in with Apple</strong> and choose <em>Hide My Email</em>, we receive a relay address ending in <code>privaterelay.appleid.com</code> rather than your real one. That works exactly the same way for us, and your real address stays with Apple.</p>
+
+  <h3>When you set up your delivery</h3>
+  <p>Your chosen <strong>topic</strong>, how many <strong>bytes per day</strong> you want, the <strong>times</strong> you want them, and your <strong>time zone</strong>. The time zone is read from your device setting so that "8:00 AM" means your 8:00 AM.</p>
+
+  <h3>When you enable notifications</h3>
+  <p>A <strong>push token</strong> — an anonymous identifier issued by Apple that lets a notification reach your device. It is not your phone number, your device ID, or anything that identifies you outside this app, and it changes if you reinstall.</p>
+
+  <h3>As you use the app</h3>
+  <p>The <strong>bytes generated for you</strong> are stored so you can read your history, and so that tomorrow's byte can build on what you have already seen rather than repeat it.</p>
+
+  <h3>What is never collected</h3>
+  <ul>
+    <li>No location data</li>
+    <li>No contacts, photos, calendar, or health data</li>
+    <li>No advertising identifier, and no advertising of any kind</li>
+    <li>No analytics or crash-reporting SDKs, and no behavioural profiling</li>
+    <li>No cross-app or cross-site tracking</li>
+  </ul>
+
+  <h2><span class="num">03</span>How your information is used</h2>
+  <p>Only to run the service you signed up for: authenticating you, generating bytes on your topic, delivering them at your chosen times, and showing you your history. Nothing is used for marketing, advertising, or profiling, and none of it is sold, rented, or shared with data brokers.</p>
+
+  <h2><span class="num">04</span>Where it is stored</h2>
+  <p>All account data, preferences and bytes are stored on Amazon Web Services in the <strong>Canada West (Calgary) region</strong>, using Amazon Cognito for accounts and Amazon DynamoDB for preferences and byte history. Data is encrypted in transit and at rest, and every request between the app and the service travels over HTTPS.</p>
+
+  <h2><span class="num">05</span>How your bytes are generated</h2>
+  <p>Each byte is written by a large language model — Anthropic's Claude, accessed through Amazon Bedrock — prompted with your chosen topic and the titles of bytes you have already received, so it can build on them.</p>
+
+  <div class="callout">
+    <p><strong>Generated content can be wrong.</strong> Bytes are short, automatically written, and not reviewed by a person before they reach you. Treat them as a starting point for curiosity, not as fact — and never as medical, legal, or financial advice. Each byte includes a search link so you can check it yourself.</p>
+  </div>
+
+  <p>Your topic and recent byte titles are sent to Amazon Bedrock to produce each byte. Your email address is not. Per Amazon's terms for Bedrock, prompts are not used to train the underlying models.</p>
+
+  <h2><span class="num">06</span>Who else is involved</h2>
+  <p>DailyByte relies on a small number of services, each doing one job:</p>
+
+  <div class="tablescroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Service</th>
+          <th scope="col">Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Amazon Web Services</td>
+          <td>Accounts, data storage, scheduling, and byte generation</td>
+        </tr>
+        <tr>
+          <td>Apple</td>
+          <td>Push notification delivery, and Sign in with Apple if you use it</td>
+        </tr>
+        <tr>
+          <td>Google</td>
+          <td>Sign in with Google, if you use it</td>
+        </tr>
+        <tr>
+          <td>Expo</td>
+          <td>Relays notifications from the service to Apple's network</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note">Each receives only what it needs to do its job. None of them receive your byte history, and none are given your information for their own marketing.</p>
+
+  <h2><span class="num">07</span>Your choices</h2>
+
+  <h3>Change what you receive</h3>
+  <p>Your topic, how many bytes a day, and their delivery times can all be changed at any time under <strong>Settings</strong> in the app.</p>
+
+  <h3>Stop notifications</h3>
+  <p>Turn off notifications for DailyByte in your device's iOS Settings. Your account stays intact and your bytes keep building in your history.</p>
+
+  <h3>Delete your account</h3>
+  <p>Under <strong>Settings → Delete account</strong>. This is immediate and permanent, and it removes:</p>
+  <ul>
+    <li>Your account and sign-in credentials</li>
+    <li>Your email address, topic, schedule and time zone</li>
+    <li>Every byte ever generated for you</li>
+    <li>Your push token and all scheduled deliveries</li>
+  </ul>
+  <p>There is no recovery period and no backup copy kept for you. If you want to come back afterwards, you will be starting fresh.</p>
+
+  <h2><span class="num">08</span>How long things are kept</h2>
+  <p>Your account and preferences are kept for as long as your account exists. Bytes are kept so you can read your history. Everything is removed when you delete your account. Operational logs, which record that a request happened rather than what was in it, are retained for a short period for debugging and then discarded.</p>
+
+  <h2><span class="num">09</span>Children</h2>
+  <p>DailyByte is not directed at children and is not intended for anyone under 13. We do not knowingly collect information from children. If you believe a child has created an account, get in touch and it will be removed.</p>
+
+  <h2><span class="num">10</span>Your rights</h2>
+  <p>Depending on where you live, you may have the right to access, correct, export, or delete the information held about you. Most of this is available directly in the app: Settings shows and edits your preferences, and Delete account removes everything. For anything else, contact us using the details below and we will respond.</p>
+
+  <h2><span class="num">11</span>Changes to this policy</h2>
+  <p>If this policy changes in a way that affects what is collected or how it is used, the date at the top will be updated and, for a significant change, you will be told in the app before it takes effect.</p>
+
+  <h2><span class="num">12</span>Contact</h2>
+  <p>Questions about this policy, about your data, or about anything else in the app:</p>
+  <p class="contact"><a href="mailto:adamianarshia@gmail.com">adamianarshia@gmail.com</a></p>
+  <p class="note">This is also the address to use for support requests and bug reports. Expect a reply within a few days.</p>
+
+  <footer>
+    DailyByte is an independent project. This policy is written in plain language on purpose — if any part of it is unclear, ask and it will be explained or reworded.
+    See also the <a href="https://arshiaadamian.github.io/DailyByte/support.html">support page</a>.
+  </footer>
+</div>

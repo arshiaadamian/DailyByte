@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import styles from '../style/SignIn.styles';
+import { Daisy } from '../components/Mascot';
+import { FadeIn, PressableScale } from '../components/Motion';
+import { daisy } from '../assets/mascots';
 import { Ionicons } from '@expo/vector-icons';
 
 
@@ -90,8 +93,11 @@ export default function ResetPasswordScreen({onSignInPress})
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.content}>
-                <Text style={styles.heading}>DailyByte</Text>
-                <Text style={styles.subheading}>Reset Password</Text>
+                <FadeIn>
+                    <Daisy source={daisy.fullBody} height={150} style={styles.brandMark} />
+                    <Text style={styles.heading}>DailyByte</Text>
+                    <Text style={styles.subheading}>Reset Password</Text>
+                </FadeIn>
 
                 <Text style={styles.label}>Email</Text>
                 <TextInput
@@ -118,7 +124,7 @@ export default function ResetPasswordScreen({onSignInPress})
                     autoCapitalize="none"
                     textContentType="password"
                     />
-                    <Pressable
+                    <PressableScale
                         onPress={() => setShowPassword((v) => !v)}
                         style={styles.eyeButton}
                         hitSlop={8}
@@ -128,10 +134,10 @@ export default function ResetPasswordScreen({onSignInPress})
                             size={20}
                             color="#5A5546"
                         />
-                    </Pressable>
+                    </PressableScale>
                 </View>
 
-                <Pressable
+                <PressableScale
                 onPress={handleResetPassword}
                 disabled={submitting}
                 style={({ pressed }) => [
@@ -143,7 +149,7 @@ export default function ResetPasswordScreen({onSignInPress})
                 {submitting
                     ? <ActivityIndicator color="#E1DED3" />
                     : <Text style={styles.buttonText}>Get Password Reset Code</Text>}
-                </Pressable>
+                </PressableScale>
 
                 {codeSentMessage && <Text style={styles.success}>{codeSentMessage}</Text>}
 
@@ -160,7 +166,7 @@ export default function ResetPasswordScreen({onSignInPress})
                     autoCapitalize="none"
                     textContentType="password"
                     />
-                    <Pressable
+                    <PressableScale
                         onPress={() => setShowConfirmationCode((v) => !v)}
                         style={styles.eyeButton}
                         hitSlop={8}
@@ -170,11 +176,11 @@ export default function ResetPasswordScreen({onSignInPress})
                             size={20}
                             color="#5A5546"
                         />
-                    </Pressable>
+                    </PressableScale>
                 </View>
 
 
-                <Pressable
+                <PressableScale
                 onPress={handleConfirmResetPassword}
                 disabled={submitting}
                 style={({ pressed }) => [
@@ -186,12 +192,12 @@ export default function ResetPasswordScreen({onSignInPress})
                 {submitting
                     ? <ActivityIndicator color="#E1DED3" />
                     : <Text style={styles.buttonText}>Reset Password</Text>}
-                </Pressable>
+                </PressableScale>
 
                  {error && <Text style={styles.error}>{error}</Text>}
                  {successResetMessage && <Text style={styles.success}>{successResetMessage}</Text>}
 
-                <Pressable
+                <PressableScale
                     onPress={onSignInPress}
                     style={({ pressed }) => [
                         styles.resendButton,
@@ -199,7 +205,7 @@ export default function ResetPasswordScreen({onSignInPress})
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Back to Sign in</Text>
-                </Pressable>
+                </PressableScale>
             </View>
         </KeyboardAvoidingView>
     );

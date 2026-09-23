@@ -6,6 +6,8 @@ const GENERATE_SINGLE_BYTE = `${API_BASE}/bytes/generate`;
 const UPDATE_PREFERENCES = `${API_BASE}/user/preferences`;
 const USER_INFORMATION = `${API_BASE}/user/information`;
 const SAVE_TOKEN =`${API_BASE}/user/savetoken`
+const CREATE_USER = `${API_BASE}/user/create`
+const DELETE_USER = `${API_BASE}/user/delete`
 
 export async function getUserInformation(token)
 {
@@ -16,7 +18,56 @@ export async function getUserInformation(token)
         }
     });
 
+    if (response.status === 404)
+    {
+        return null;
+    }
+
     if (!response.ok) // build in property of Fetch API's response, response.ok returns true if the statusCode header is in the range of 200-299
+    {
+        const detail = await response.text();
+        const message = JSON.parse(detail).message;
+        throw new Error(`${message}`);
+    }
+
+    return response.json();
+}
+
+// deletes the delivery schedules, bytes, profile row and Cognito account.
+// identity comes from the JWT, so there is no body.
+export async function deleteUser(token)
+{
+    const response = await fetch(DELETE_USER, {
+        method: "DELETE",
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+
+    if (!response.ok)
+    {
+        const detail = await response.text();
+        const message = JSON.parse(detail).message;
+        throw new Error(`${message}`);
+    }
+
+    return response.json();
+}
+
+// creates the DynamoDB row for the signed-in user. userId and email come from the
+// JWT on the Lambda side, so only the onboarding answers go in the body.
+export async function createUser(token, reqBody)
+{
+    const response = await fetch(CREATE_USER, {
+        method: "POST",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reqBody)
+    });
+
+    if (!response.ok)
     {
         const detail = await response.text();
         const message = JSON.parse(detail).message;

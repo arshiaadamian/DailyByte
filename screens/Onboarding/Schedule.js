@@ -1,10 +1,24 @@
-import { View, Text, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { useState, useEffect } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getCalendars } from 'expo-localization'
 import styles from '../../style/Onboarding.styles';
+import { Daisy } from '../../components/Mascot';
+import { FadeIn, PressableScale } from '../../components/Motion';
+import { daisy } from '../../assets/mascots';
 
 const ORDINALS = { 2: 'Second', 3: 'Third' };
+
+// Slots start here rather than empty, so Continue is enabled without forcing
+// the user to nudge the picker first. Only the time part is ever read - SignUp
+// pulls getHours()/getMinutes() off these - so the date is arbitrary.
+const DEFAULT_DELIVERY_HOUR = 8;
+const DEFAULT_DELIVERY_MINUTE = 0;
+
+function defaultDeliveryTime()
+{
+    return new Date(1970, 0, 1, DEFAULT_DELIVERY_HOUR, DEFAULT_DELIVERY_MINUTE);
+}
 
 function formatClock(date)
 {
@@ -49,15 +63,31 @@ export default function ScheduleScreen({
     }
 
     useEffect(() => {
-        if (bytesPerDay == 1)
-        {
-            setDeliveryTime(prev => ({...prev, delivery2: null, delivery3: null}));
-        }
+        setDeliveryTime(prev => {
+            const next = {...prev};
 
-        if (bytesPerDay == 2)
-        {
-            setDeliveryTime(prev => ({...prev, delivery3: null}));
-        }
+            for (let n = 1; n <= options.length; n++)
+            {
+                const key = `delivery${n}`;
+
+                if (n <= bytesPerDay)
+                {
+                    // Newly unlocked slots get the default. A slot the user has
+                    // already set keeps their choice.
+                    if (!next[key])
+                    {
+                        next[key] = defaultDeliveryTime();
+                    }
+                }
+                else
+                {
+                    // Locked slots clear, as before.
+                    next[key] = null;
+                }
+            }
+
+            return next;
+        });
 
     }, [bytesPerDay]);
 
@@ -98,28 +128,32 @@ export default function ScheduleScreen({
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.scheduleTop}>
-                <Pressable
+                <View style={styles.progressTrack}>
+                    <View style={styles.progressFill} />
+                </View>
+
+                <PressableScale
                     onPress={onBack}
                     style={({ pressed }) => [
                         styles.backButton,
                         pressed && styles.backButtonPressed,
                     ]}
                 >
-                    <Text style={styles.backButtonText}>
-                    back
-                    </Text>
-                </Pressable>
+                    <Text style={styles.backButtonText}>Back</Text>
+                </PressableScale>
 
-                <View style={styles.progressTrack}>
-                    <View style={styles.progressFill} />
-                </View>
-
-                <Text style={styles.scheduleHeading}>How often, and when?</Text>
+                <FadeIn style={styles.stepHeader}>
+                    <View style={styles.stepHeaderText}>
+                        <Text style={styles.stepEyebrow}>Step two</Text>
+                        <Text style={styles.scheduleHeading}>How often, and when?</Text>
+                    </View>
+                    <Daisy source={daisy.sleeping} height={74} />
+                </FadeIn>
 
                 <Text style={styles.sectionLabel}>Bytes per day</Text>
                 <View style={styles.byteSelector}>
                     {options.map(n => (
-                        <Pressable
+                        <PressableScale
                             key={n}
                             onPress={() => setBytesPerDay(n)}
                             style={[
@@ -131,7 +165,7 @@ export default function ScheduleScreen({
                                 styles.byteOptionText,
                                 bytesPerDay === n && styles.byteOptionTextSelected,
                             ]}>{n}</Text>
-                        </Pressable>
+                        </PressableScale>
                     ))}
                 </View>
 
@@ -153,8 +187,9 @@ export default function ScheduleScreen({
 
                     return (
                         <View key={n}>
-                            <Pressable
+                            <PressableScale
                                 onPress={() => setActiveSlot(activeSlot === n ? null : n)}
+                                scaleTo={0.985}
                                 style={styles.deliveryRow}
                             >
                                 <Text style={styles.deliveryRowLabel}>
@@ -163,10 +198,10 @@ export default function ScheduleScreen({
                                 {value && (
                                     <Text style={styles.deliveryRowValue}>{formatClock(value)}</Text>
                                 )}
-                            </Pressable>
+                            </PressableScale>
                             {activeSlot === n && (
                                 <DateTimePicker
-                                    value={value ?? new Date(1970, 0, 1, 8, 0)}
+                                    value={value ?? defaultDeliveryTime()}
                                     mode="time"
                                     is24Hour={false}
                                     display={Platform.OS === 'ios' ? 'spinner' : 'default'}
@@ -179,7 +214,7 @@ export default function ScheduleScreen({
             </View>
 
             <View style={styles.actions}>
-                <Pressable
+                <PressableScale
                     disabled={isScheduleIncomplete}
                     onPress={onGoToNotificationPress}
                     style={({ pressed }) => [
@@ -189,9 +224,11 @@ export default function ScheduleScreen({
                     ]}
                 >
                     <Text style={styles.primaryButtonText}>Continue</Text>
-                </Pressable>
+                </PressableScale>
 
-                <Pressable
+                {/* CHANGED: guarded - see Topic.js */}
+                {onSignInPress && (
+                <PressableScale
                     onPress={onSignInPress}
                     style={({ pressed }) => [
                         styles.resendButton,
@@ -199,7 +236,8 @@ export default function ScheduleScreen({
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Already have an account? Sign in</Text>
-                </Pressable>
+                </PressableScale>
+                )}
             </View>
         </KeyboardAvoidingView>
     )

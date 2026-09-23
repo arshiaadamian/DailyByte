@@ -1,7 +1,10 @@
 // CHANGED: added Platform import, needed by handleTimeChange below (it was used but never imported before)
 // CHANGED: added ScrollView so the page can scroll instead of squeezing/pushing the buttons off screen
-import {View, Text, Pressable, TextInput, ActivityIndicator, Platform, ScrollView} from 'react-native';
+import {View, Text, TextInput, ActivityIndicator, Platform, ScrollView, Alert} from 'react-native';
 import styles from '../style/Settings.styles';
+import { Daisy } from '../components/Mascot';
+import { FadeIn, PressableScale } from '../components/Motion';
+import { daisy } from '../assets/mascots';
 import { useAuth } from '../context/AuthContext';
 import { useState, useEffect } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -9,7 +12,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 // update preference API
-import { updatePreferences, getUserInformation } from '../api/bytes';
+import { updatePreferences, getUserInformation, deleteUser } from '../api/bytes';
 
 
 
@@ -42,6 +45,7 @@ export default function SettingsScreen()
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
     const [submitting, setSubmitting] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const [loading, setLoading] = useState(true);
     
     // update preferences
@@ -49,6 +53,7 @@ export default function SettingsScreen()
     const [bytesPerDay, setBytesPerDay] = useState(null);
     const [deliveryTime, setDeliveryTime] = useState(null);
     const [activeSlot, setActiveSlot] = useState(null); // NEW: tracks which delivery-time picker is currently open (like Schedule.js)
+    const [email, setEmail] = useState(null);
 
     // NEW: byte slot numbers, and which ones are locked based on bytesPerDay.
     // Recomputed fresh on every render (same approach as Schedule.js) so it never goes stale.
@@ -96,6 +101,39 @@ export default function SettingsScreen()
         {
             setSubmitting(false);
             setError(err.message ?? 'Could not sign out');
+        }
+    }
+
+    // irreversible, so it asks first. The native alert is the convention users
+    // already recognise for this.
+    function handleDeleteAccount()
+    {
+        Alert.alert(
+            'Delete account',
+            'This permanently deletes your account, your preferences and your scheduled bytes. This cannot be undone.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Delete', style: 'destructive', onPress: confirmDeleteAccount }
+            ]
+        );
+    }
+
+    async function confirmDeleteAccount()
+    {
+        try
+        {
+            setDeleting(true);
+            setError(null);
+            const idToken = await getIdToken();
+            await deleteUser(idToken);
+            // the Cognito account is gone, so drop the stored session too -
+            // App.js falls back to the signed-out screens on the next render
+            await signOut();
+        }
+        catch (err)
+        {
+            setDeleting(false);
+            setError(err.message ?? 'Could not delete your account');
         }
     }
 
@@ -171,6 +209,7 @@ export default function SettingsScreen()
                     setTopic(data.message.topic);
                     setBytesPerDay(data.message.bytesPerDay);
                     setDeliveryTime(data.message.deliveryTime);
+                    setEmail(data.message.email)
                 }
             }
             catch (err)
@@ -259,7 +298,13 @@ export default function SettingsScreen()
             )}
 
             <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-                <Text style={styles.heading}>Settings</Text>
+                <FadeIn style={styles.masthead}>
+                    <View>
+                        <Text style={styles.eyebrow}>Yours</Text>
+                        <Text style={styles.heading}>Settings</Text>
+                    </View>
+                    <Daisy source={daisy.playful} height={96} />
+                </FadeIn>
 
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Preferences</Text>
@@ -320,7 +365,7 @@ export default function SettingsScreen()
 
                                 return (
                                     <View key={n}>
-                                        <Pressable
+                                        <PressableScale
                                             onPress={() => setActiveSlot(activeSlot === n ? null : n)}
                                             style={styles.deliveryRow}
                                         >
@@ -330,7 +375,7 @@ export default function SettingsScreen()
                                             {value && (
                                                 <Text style={styles.deliveryRowValue}>{formatClock(value)}</Text>
                                             )}
-                                        </Pressable>
+                                        </PressableScale>
                                         {activeSlot === n && (
                                             <DateTimePicker
                                                 value={value ?? new Date(1970, 0, 1, 8, 0)}
@@ -346,7 +391,7 @@ export default function SettingsScreen()
                         </View>
                     </View>
 
-                    <Pressable
+                    <PressableScale
                         onPress={handleUpdatePreferences}
                         disabled={isScheduleIncomplete}
                         style={({ pressed }) => [
@@ -356,27 +401,42 @@ export default function SettingsScreen()
                         ]}
                     >
                         <Text style={styles.saveButtonText}>Save Preferences</Text>
-                    </Pressable>
+                    </PressableScale>
                 </View>
 
                 <View style={styles.card}>
                     <Text style={styles.label}>Signed in as</Text>
-                    <Text style={styles.value}>{user?.signInDetails?.loginId ?? '-'}</Text>
+                    <Text style={styles.value}>{email ?? '-'}</Text>
                 </View>
                 <View style={styles.signOutArea}>
-                    <Pressable
+                    <PressableScale
                         onPress={handleSignOut}
-                        disabled={submitting}
+                        disabled={submitting || deleting}
                         style={({ pressed }) => [
                             styles.button,
                             pressed && styles.buttonPressed,
-                            submitting && styles.buttonDisabled,
+                            (submitting || deleting) && styles.buttonDisabled,
                         ]}
                     >
                         <Text style={styles.buttonText}>
                             {submitting ? 'Signing out…' : 'Sign out'}
                         </Text>
-                    </Pressable>
+                    </PressableScale>
+                </View>
+                <View style={styles.deleteArea}>
+                    <PressableScale
+                        onPress={handleDeleteAccount}
+                        disabled={submitting || deleting}
+                        style={({ pressed }) => [
+                            styles.deleteButton,
+                            pressed && styles.deleteButtonPressed,
+                            (submitting || deleting) && styles.buttonDisabled,
+                        ]}
+                    >
+                        <Text style={styles.deleteButtonText}>
+                            {deleting ? 'Deleting…' : 'Delete account'}
+                        </Text>
+                    </PressableScale>
                 </View>
             </ScrollView>
         </View>

@@ -1,19 +1,38 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import styles from '../style/SignIn.styles';
+import { Daisy } from '../components/Mascot';
+import { FadeIn, PressableScale } from '../components/Motion';
+import { daisy } from '../assets/mascots';
+import GoogleLogo from '../components/GoogleLogo';
+import AppleLogo from '../components/AppleLogo';
 
 
 export default function SignInScreen({ onSignUpPress, onResetPress }) {
 
-    const { signIn, getIdToken } = useAuth();
+    const { signIn, loginWithGoogle, loginWithApple } = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
+
+    // CHANGED: signInWithRedirect hands off to the browser, so submitting has to stay
+    // true past the call - the old finally cleared it the moment the browser opened.
+    // Nothing fires if the user backs out of Google instead of finishing, so the
+    // button is re-enabled when the app comes back to the foreground.
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (state) => {
+            if (state === 'active')
+            {
+                setSubmitting(false);
+            }
+        });
+        return () => subscription.remove();
+    }, []);
 
     async function handleSignIn()
     {
@@ -40,14 +59,49 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
         }
     }
 
+    async function handleGoogleSignIn()
+    {
+        try 
+        {
+            setError(null);
+            setSubmitting(true);
+            await loginWithGoogle();
+        }
+        catch (err)
+        {
+            setSubmitting(false);
+            setError("Error with handleGoogleSignIn, " + err.message);
+        }
+    }
+
+    async function handleAppleSignIn()
+    {
+        try
+        {
+            setError(null);
+            setSubmitting(true);
+            await loginWithApple();
+        }
+        catch (err)
+        {
+            setSubmitting(false);
+            setError("Error with handleAppleSignIn, " + err.message);
+        }
+    }
+
+    
+
     return (
         <KeyboardAvoidingView
             style={styles.screen}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.content}>
-                <Text style={styles.heading}>DailyByte</Text>
-                <Text style={styles.subheading}>One small idea a day.</Text>
+                <FadeIn>
+                    <Daisy source={daisy.tilted} height={132} style={styles.brandMark} />
+                    <Text style={styles.heading}>DailyByte</Text>
+                    <Text style={styles.subheading}>One small idea a day.</Text>
+                </FadeIn>
 
                 <Text style={styles.label}>Email</Text>
                 <TextInput
@@ -74,7 +128,7 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     autoCapitalize="none"
                     textContentType="password"
                     />
-                    <Pressable
+                    <PressableScale
                         onPress={() => setShowPassword((v) => !v)}
                         style={styles.eyeButton}
                         hitSlop={8}
@@ -84,12 +138,12 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                             size={20}
                             color="#5A5546"
                         />
-                    </Pressable>
+                    </PressableScale>
                 </View>
 
                 {error && <Text style={styles.error}>{error}</Text>}
 
-                <Pressable
+                <PressableScale
                 onPress={handleSignIn}
                 disabled={submitting}
                 style={({ pressed }) => [
@@ -101,8 +155,37 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                 {submitting
                     ? <ActivityIndicator color="#E1DED3" />
                     : <Text style={styles.buttonText}>Sign in</Text>}
-                </Pressable>
-                <Pressable
+                </PressableScale>
+                
+                {/* Google sign in */}
+                <PressableScale
+                    onPress={handleGoogleSignIn}
+                    style={({ pressed }) => [
+                        styles.button,
+                        styles.oauthButton,
+                        pressed && styles.buttonPressed,
+                        submitting && styles.buttonDisabled,
+                    ]}
+                >
+                    <GoogleLogo size={18} style={styles.oauthLogo} />
+                    <Text style={styles.buttonText}>Google Sign in</Text>
+                </PressableScale>
+
+                {/* Apple sign in */}
+                <PressableScale
+                    onPress={handleAppleSignIn}
+                    style={({ pressed }) => [
+                        styles.button,
+                        styles.oauthButton,
+                        pressed && styles.buttonPressed,
+                        submitting && styles.buttonDisabled,
+                    ]}
+                >
+                    <AppleLogo size={18} style={styles.oauthLogo} />
+                    <Text style={styles.buttonText}>Apple Sign in</Text>
+                </PressableScale>
+
+                <PressableScale
                     onPress={onSignUpPress}
                     style={({ pressed }) => [
                         styles.resendButton,
@@ -110,10 +193,9 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Don't have an account? Sign up</Text>
-                </Pressable>
-
-                
-                <Pressable
+                    
+                </PressableScale>
+                <PressableScale
                     onPress={onResetPress}
                     style={({ pressed }) => [
                         styles.resendButton,
@@ -121,7 +203,7 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                     ]}
                 >
                     <Text style={styles.resendButtonText}>Reset Password</Text>
-                </Pressable>
+                </PressableScale>
 
 
             </View>

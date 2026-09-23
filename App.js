@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar'
-import { ActivityIndicator, Linking, SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, Text, Pressable} from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Newsreader_400Regular, Newsreader_700Bold } from '@expo-google-fonts/newsreader';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -14,6 +14,8 @@ import SettingsScreen from './screens/Settings';
 
 // import onboarding screens
 import OnboardingFlow from './screens/Onboarding/OnboardingFlow';
+// CHANGED: preference steps for a signed-in user who has no profile row yet
+import PreferencesFlow from './screens/Onboarding/PreferencesFlow';
 // import WelcomeScreen from './screens/Onboarding/Welcome';
 // import TopicScreen from './screens/Onboarding/Topic'
 
@@ -21,10 +23,11 @@ import OnboardingFlow from './screens/Onboarding/OnboardingFlow';
 // import NavBar
 import NavBar from "./components/NavBar";
 
-// import notifications
+// import notifications and getUserInformation
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
-import { savePushToken } from './api/bytes';
+import { savePushToken, getUserInformation } from './api/bytes';
+
 
 
 
@@ -67,6 +70,8 @@ function AppContent() {
   // isActive state, the state that is passed down to the navbar, gets updated from there and gets passed back up.
   const [activeTab, setActiveTab] = useState("home");
   const [authScreen, setAuthScreen] = useState("signUp");
+  const [profile, setProfile] = useState("unknown"); // 'unknown' | 'exists' | 'none' | 'error'
+  const [checkAttempt, setCheckAttempt] = useState(0);
 
   // reset back to the sign-in screen so a later sign-out doesn't land on sign-up
   useEffect(() => {
@@ -114,13 +119,47 @@ function AppContent() {
       }
     }
 
+
+  useEffect(() => {
+    if (status != 'signedIn')
+    {
+      setProfile('unknown');
+      return;
+    }
+    let cancelled = false;
+    async function checkProfile()
+    {
+      try {
+        const idToken = await getIdToken();
+        const info = await getUserInformation(idToken);
+        if (cancelled == false)
+        {
+          setProfile(info ? 'exists' : 'none');
+        }
+      } catch (err)
+      {
+        console.log("profile check failed: ", err.message);
+        if (cancelled == false)
+        {
+          setProfile('error');
+        }
+      }
+    }
+    checkProfile();
+    
+    return () => { cancelled = true; };
+
+  }, [status, checkAttempt]);
+
+
+
   // on launch, if singed in, write pushToken to database
   useEffect(() => {
-    if (status === 'signedIn')
+    if (profile === 'exists')
     {
       handlePushToken();
     }
-  }, [status]);
+  }, [profile]);
 
   const screen = {
     "home": <HomeScreen />,
@@ -156,6 +195,38 @@ function AppContent() {
     }
   }
 
+  // profile checks
+  if (profile === 'unknown')
+  {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator size="large" color="#816148" />
+      </View>
+    ); 
+  }
+
+  // CHANGED: was OnboardingFlow, which ended on a sign-up screen the user had
+  // already passed. PreferencesFlow only collects preferences and then creates
+  // the profile row, so Google and password users land in the same place.
+  if (profile === 'none')
+  {
+    return (
+      <PreferencesFlow onComplete={() => setCheckAttempt(n => n + 1)} />
+    );
+  }
+
+  if (profile === 'error')
+  {
+    return (
+      <View style={styles.centered}>
+        <Text style={{ marginBottom: 12, color: '#2F2E2C' }}>Couldn't load your account.</Text>
+        <Pressable onPress={() => setCheckAttempt(n => n + 1)}>
+          <Text style={{ color: '#816148' }}>Try again</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
   const activeScreen = screen[activeTab]
 
   return (
@@ -167,5 +238,11 @@ function AppContent() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1},
+  root: { flex: 1 },
+  centered: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E1DED3',
+  },
 });

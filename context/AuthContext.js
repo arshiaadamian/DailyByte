@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { getCurrentUser, signIn as amplifySignIn, signOut as amplifySignOut, signUp as amplifySignUp,fetchAuthSession, confirmSignUp as amplifyConfirmSignUp, resendSignUpCode as amplifyResendCode, autoSignIn as amplifyAutoSignIn, resetPassword as amplifyResetPassword, confirmResetPassword as amplifyConfirmResetPassword } from 'aws-amplify/auth';
+import { getCurrentUser, signIn as amplifySignIn, signOut as amplifySignOut, signUp as amplifySignUp,fetchAuthSession, confirmSignUp as amplifyConfirmSignUp, resendSignUpCode as amplifyResendCode, autoSignIn as amplifyAutoSignIn, resetPassword as amplifyResetPassword, confirmResetPassword as amplifyConfirmResetPassword, signInWithRedirect } from 'aws-amplify/auth';
+import { Hub } from 'aws-amplify/utils';
 
 const AuthContext = createContext(null); // auth context variable, called an empty channel
 
@@ -39,6 +40,40 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         )
     }, []);
 
+    useEffect(() => {
+        async function handleAuthEvent(data)
+        {
+            const event = data.payload.event; // amplify sends this, e.g. signInWithRedirect
+
+            if (event === 'signInWithRedirect')
+            {
+                try 
+                {
+                    const currentUser = await getCurrentUser();
+                    setUser(currentUser);
+                    setStatus('signedIn');
+                }
+                catch (err)
+                {
+                    console.log("Post-redirect session load failed: ", err.message);
+                    setStatus('signedOut');
+                }
+            }
+            else if (event === 'signInWithRedirect_failure')
+            {
+                console.log("OAuth failed: ", data.payload.data);
+                setStatus('signedOut');
+            }
+        }
+
+        // CHANGED: these two lines used to sit inside handleAuthEvent, so nothing
+        // ever subscribed - the handler could only run if it was already running.
+        // Google sign in only appeared to work because the next app launch picked
+        // the persisted session up through getCurrentUser above.
+        const unsubscribe = Hub.listen('auth', handleAuthEvent);
+        return unsubscribe;
+    }, [])
+
     async function signIn(email, password)
     {
         await amplifySignIn({username: email, password});
@@ -63,9 +98,11 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         });
     }
 
-    async function confirmSignUp(email, code, clientMetadata)
+    // CHANGED: clientMetadata dropped. The profile row is created by POST /user
+    // after onboarding now, not by the PostConfirmation trigger.
+    async function confirmSignUp(email, code)
     {
-        await amplifyConfirmSignUp( {username: email, confirmationCode: code, options: {clientMetadata} });
+        await amplifyConfirmSignUp( {username: email, confirmationCode: code });
         await amplifyAutoSignIn();
         const currentUser = await getCurrentUser();
         setUser(currentUser);
@@ -93,8 +130,18 @@ export function AuthProvider({ children }) // children is a special prop, it is 
         return session.tokens?.idToken?.toString();
     }
 
+    async function loginWithGoogle()
+    {
+        await signInWithRedirect({ provider: 'Google' });
+    }
+
+    async function loginWithApple()
+    {
+        await signInWithRedirect({ provider: 'Apple' });
+    }
+
     return (
-        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken, resetPassword, confirmResetPassword}} >
+        <AuthContext.Provider value={{status, user, signIn, signOut, signUp, confirmSignUp, resendCode, getIdToken, resetPassword, confirmResetPassword, loginWithGoogle, loginWithApple}} >
             {children}
         </AuthContext.Provider>
     );

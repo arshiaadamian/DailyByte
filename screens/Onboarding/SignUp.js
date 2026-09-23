@@ -1,12 +1,20 @@
-import { View, Text, Pressable, KeyboardAvoidingView, TextInput, Platform } from 'react-native';
+import { View, Text, KeyboardAvoidingView, TextInput, Platform, AppState } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../../style/Onboarding.styles';
+import { Daisy } from '../../components/Mascot';
+import { FadeIn, PressableScale } from '../../components/Motion';
+import { daisy } from '../../assets/mascots';
+import GoogleLogo from '../../components/GoogleLogo';
+import AppleLogo from '../../components/AppleLogo';
 
-export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay, deliveryTime, timeZone, onBack, pushToken})
+// CHANGED: the preference props are gone. This screen creates the Cognito account
+// and nothing else - PreferencesFlow collects topic/schedule/notifications after
+// sign in and creates the DynamoDB row over POST /user.
+export default function SignUpScreen({ onSignInPress, onBack })
 {
-    const { signUp, confirmSignUp, resendCode } = useAuth();
+    const { signUp, confirmSignUp, resendCode, loginWithGoogle, loginWithApple } = useAuth();
 
     const [submitting, setSubmitting] = useState(false);
     const [email, setEmail] = useState('');
@@ -18,17 +26,19 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const deliveryHours = [deliveryTime.delivery1, deliveryTime.delivery2, deliveryTime.delivery3]
-        .filter(delivery => delivery !== null)
-        .map(delivery => ({ hour: delivery.getHours(),  minute: delivery.getMinutes()}));
-
-    const clientMetadata = {
-        selectedTopic: selectedTopic,
-        bytesPerDay: String(bytesPerDay), 
-        deliveryTime: JSON.stringify(deliveryHours),
-        timeZone: timeZone,
-        pushToken: pushToken
-    }
+    // CHANGED: signInWithRedirect hands off to the browser, so submitting has to stay
+    // true past the call - the old finally cleared it the moment the browser opened.
+    // Nothing fires if the user backs out of Google instead of finishing, so the
+    // button is re-enabled when the app comes back to the foreground.
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (state) => {
+            if (state === 'active')
+            {
+                setSubmitting(false);
+            }
+        });
+        return () => subscription.remove();
+    }, []);
 
     async function handleSignUp()
     {
@@ -89,7 +99,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
         {
             setError(null);
             setSubmitting(true);
-            await confirmSignUp(email, code, clientMetadata);
+            await confirmSignUp(email, code);
             setSubmitting(false);
         }
         catch (err)
@@ -97,6 +107,36 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
             setSubmitting(false);
             setError(err.message ?? 'Error with the confirmation code');
             return;
+        }
+    }
+
+    async function handleGoogleSignUp()
+    {
+        try
+        {
+            setError(null);
+            setSubmitting(true);
+            await loginWithGoogle();
+        }
+        catch (err)
+        {
+            setSubmitting(false);
+            setError(err.message ?? "Could not sign up with Google");
+        }
+    }
+
+    async function handleAppleSignUp()
+    {
+        try
+        {
+            setError(null);
+            setSubmitting(true);
+            await loginWithApple();
+        }
+        catch (err)
+        {
+            setSubmitting(false);
+            setError(err.message ?? "Could not sign up with Apple");
         }
     }
 
@@ -131,7 +171,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                 </View>
                 {!displayCodeInput && (
                     <View>
-                        <Pressable
+                        <PressableScale
                             onPress={onBack}
                             style={({ pressed }) => [
                                 styles.backButton,
@@ -139,12 +179,27 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             ]}
                         >
                             <Text style={styles.backButtonText}>Back</Text>
-                        </Pressable>
+                        </PressableScale>
 
-                        <Text style={styles.signUpHeading}>Sign up</Text>
-                        <Text style={styles.signUpSubheading}>Create your DailyByte account.</Text>
+                        <FadeIn>
+                            <Text style={styles.stepEyebrow}>Last step</Text>
+                            <Text style={styles.signUpHeading}>Sign up</Text>
+                            <Text style={styles.signUpSubheading}>Create your DailyByte account.</Text>
+                        </FadeIn>
 
-                        <Text style={styles.label}>Email</Text>
+                        {/* Label and Daisy share a row so the label stays put
+                            directly above its field. Her negative bottom margin
+                            drops her past the row, and the input - declared
+                            after her - paints over her paws. */}
+                        <View style={styles.fieldHeader}>
+                            <Text style={styles.label}>Email</Text>
+                            <Daisy
+                                source={daisy.graduation}
+                                height={96}
+                                style={styles.fieldMascot}
+                                pointerEvents="none"
+                            />
+                        </View>
                         <TextInput
                             style={styles.input}
                             value={email}
@@ -169,7 +224,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                                 autoCapitalize="none"
                                 textContentType="newPassword"
                             />
-                            <Pressable
+                            <PressableScale
                                 onPress={() => setShowPassword((v) => !v)}
                                 style={styles.eyeButton}
                                 hitSlop={8}
@@ -179,10 +234,10 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                                     size={20}
                                     color="#5A5546"
                                 />
-                            </Pressable>
+                            </PressableScale>
                         </View>
 
-                        <Text style={styles.label}>Confrim Password</Text>
+                        <Text style={styles.label}>Confirm Password</Text>
                         <View style={styles.passwordRow}>
                             <TextInput
                                 style={[styles.input, styles.passwordInput]}
@@ -194,7 +249,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                                 autoCapitalize="none"
                                 textContentType="newPassword"
                             />
-                            <Pressable
+                            <PressableScale
                                 onPress={() => setShowConfirmPassword((v) => !v)}
                                 style={styles.eyeButton}
                                 hitSlop={8}
@@ -204,12 +259,12 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                                     size={20}
                                     color="#5A5546"
                                 />
-                            </Pressable>
+                            </PressableScale>
                         </View>
 
                         {error && <Text style={styles.error}>{error}</Text>}
 
-                        <Pressable
+                        <PressableScale
                             onPress={handleSignUp}
                             disabled={submitting}
                             style={({ pressed }) => [
@@ -221,9 +276,39 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             <Text style={styles.buttonText}>
                                 {submitting ? 'Signing up…' : 'Sign up'}
                             </Text>
-                        </Pressable>
+                        </PressableScale>
 
-                        <Pressable
+                        {/* CHANGED: Google sign up. Lands in the same signedIn state as a
+                            password signup, so App.js sends it through PreferencesFlow too. */}
+                        <PressableScale
+                            onPress={handleGoogleSignUp}
+                            disabled={submitting}
+                            style={({ pressed }) => [
+                                styles.button,
+                                styles.oauthButton,
+                                pressed && styles.buttonPressed,
+                                submitting && styles.buttonDisabled,
+                            ]}
+                        >
+                            <GoogleLogo size={18} style={styles.oauthLogo} />
+                            <Text style={styles.buttonText}>Continue with Google</Text>
+                        </PressableScale>
+
+                        <PressableScale
+                            onPress={handleAppleSignUp}
+                            disabled={submitting}
+                            style={({ pressed }) => [
+                                styles.button,
+                                styles.oauthButton,
+                                pressed && styles.buttonPressed,
+                                submitting && styles.buttonDisabled,
+                            ]}
+                        >
+                            <AppleLogo size={18} style={styles.oauthLogo} />
+                            <Text style={styles.buttonText}>Continue with Apple</Text>
+                        </PressableScale>
+
+                        <PressableScale
                             onPress={onSignInPress}
                             style={({ pressed }) => [
                                 styles.resendButton,
@@ -231,13 +316,13 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             ]}
                         >
                             <Text style={styles.signUpLinkText}>Already have an account? Sign in</Text>
-                        </Pressable>
+                        </PressableScale>
                     </View>
                 )}
 
                 {displayCodeInput && (
                     <View>
-                        <Pressable
+                        <PressableScale
                             onPress={() => setDisplayCodeInput(false)}
                             style={({ pressed }) => [
                                 styles.backButton,
@@ -245,10 +330,15 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             ]}
                         >
                             <Text style={styles.backButtonText}>Back</Text>
-                        </Pressable>
+                        </PressableScale>
 
-                        <Text style={styles.signUpHeading}>Check your email</Text>
-                        <Text style={styles.signUpSubheading}>Enter the confirmation code we sent you.</Text>
+                        <FadeIn style={styles.stepHeader}>
+                            <View style={styles.stepHeaderText}>
+                                <Text style={styles.signUpHeading}>Check your email</Text>
+                                <Text style={styles.signUpSubheading}>Enter the confirmation code we sent you.</Text>
+                            </View>
+                            <Daisy source={daisy.peek} height={90} />
+                        </FadeIn>
 
                         <Text style={styles.label}>Code</Text>
                         <TextInput
@@ -262,7 +352,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
 
                         {error && <Text style={styles.error}>{error}</Text>}
 
-                        <Pressable
+                        <PressableScale
                             onPress={handleConfirmationCode}
                             disabled={submitting}
                             style={({ pressed }) => [
@@ -274,9 +364,9 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             <Text style={styles.buttonText}>
                                 {submitting ? 'Confirming…' : 'Confirm code'}
                             </Text>
-                        </Pressable>
+                        </PressableScale>
 
-                        <Pressable
+                        <PressableScale
                             onPress={handleResendCode}
                             disabled={submitting}
                             style={({ pressed }) => [
@@ -285,7 +375,7 @@ export default function SignUpScreen({ onSignInPress, selectedTopic, bytesPerDay
                             ]}
                         >
                             <Text style={styles.signUpLinkText}>Resend code</Text>
-                        </Pressable>
+                        </PressableScale>
                     </View>
                 )}
             </View>
