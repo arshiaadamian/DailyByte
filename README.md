@@ -56,64 +56,33 @@ A byte is a title, two or three sentences, and a link to read further. Small eno
 
 ## Architecture
 
+Two entry paths reach the same compute layer, so the system is easiest to read as two pictures.
+
+**Daily delivery** — no request, no app, nobody awake. EventBridge invokes Lambda directly with a JSON payload.
+
 ```mermaid
-flowchart TB
-    subgraph device["iPhone"]
-        RN["React Native<br/>Expo SDK 54"]
-    end
-
-    subgraph identity["Identity"]
-        COG["Cognito User Pool"]
-        APPLE["Sign in with Apple"]
-        GOOG["Sign in with Google"]
-    end
-
-    APIGW["API Gateway<br/>JWT authorizer"]
-
-    subgraph compute["Lambda · Node.js"]
-        CREATE["CreateUser"]
-        GEN["GenerateSingleByte"]
-        READS["GetTodaysByte<br/>GetHistoryBytes<br/>GetUserInformation"]
-        PREFS["UpdatePreferences"]
-        TOKEN["SavePushToken"]
-        DEL["DeleteAccount"]
-    end
-
-    subgraph data["DynamoDB"]
-        USERS[("DailyBytes-Users")]
-        BYTES[("DailyByte-Bytes")]
-    end
-
-    EB["EventBridge Scheduler"]
-    BR["Bedrock · Claude Haiku"]
-    PUSH["Expo Push → APNs"]
-
-    APPLE --> COG
-    GOOG --> COG
-    RN -->|Amplify v6| COG
-    RN -->|Bearer ID token| APIGW
-    APIGW --> CREATE & GEN & READS & PREFS & TOKEN & DEL
-
-    CREATE --> USERS
-    CREATE -->|creates schedules| EB
-    CREATE -.->|async invoke| GEN
-    PREFS --> USERS
-    PREFS -->|rebuilds| EB
-    DEL --> USERS & BYTES
-    DEL --> EB
-    DEL -->|AdminDeleteUser| COG
-
-    EB -->|"cron in user's timezone"| GEN
-    GEN --> USERS
-    GEN --> BR
-    GEN --> BYTES
-    GEN --> PUSH
-    PUSH --> RN
-
-    READS --> BYTES & USERS
+flowchart LR
+    EB["EventBridge Scheduler<br/>user's local time"] --> GEN["GenerateSingleByte"]
+    USERS[("Users")] -->|"topic · push token"| GEN
+    BYTES[("Bytes")] -->|"recent titles"| GEN
+    GEN <-->|"Converse API"| BR["Bedrock<br/>Claude Haiku"]
+    GEN -->|"new byte"| BYTES
+    GEN --> PUSH["Expo Push → APNs"] --> RN["iPhone"]
 ```
 
-Two entry paths reach the same compute layer. **Synchronous** requests arrive from the app through API Gateway, where a JWT authorizer validates the token before Lambda runs. **Asynchronous** invocations come from EventBridge Scheduler with a JSON payload and no HTTP at all. `GenerateSingleByte` serves both, resolving its user from either verified JWT claims or the scheduler payload.
+**App requests** — everything the user initiates, behind a JWT authorizer.
+
+```mermaid
+flowchart LR
+    RN["iPhone<br/>React Native · Expo 54"] <-->|"Amplify v6"| COG["Cognito<br/>email · Apple · Google"]
+    RN -->|"Bearer ID token"| GW["API Gateway<br/>JWT authorizer"]
+    GW --> L["Lambda<br/>profile · bytes<br/>preferences · deletion"]
+    L --> DB[("DynamoDB<br/>Users · Bytes")]
+    L -->|"create · rebuild · remove"| EB["EventBridge Scheduler"]
+    L -->|"AdminDeleteUser"| COG
+```
+
+`GenerateSingleByte` appears in both: it is the one function reachable from either side, resolving its user from verified JWT claims or from the scheduler payload. Every other function is synchronous only. The per-function breakdown is in [Backend reference](#backend-reference).
 
 ---
 
