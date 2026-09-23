@@ -1,0 +1,219 @@
+ß<title>DailyByte Support</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --ground: #E1DED3;
+    --surface: #EBE8DF;
+    --rule: #C6BDAB;
+    --ink: #2F2E2C;
+    --body: #5A5546;
+    --muted: #7D7768;
+    --accent: #816148;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #23221F;
+      --surface: #2C2B27;
+      --rule: #47443C;
+      --ink: #EDEAE0;
+      --body: #C5BFB1;
+      --muted: #938C7C;
+      --accent: #C4A183;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #23221F;
+    --surface: #2C2B27;
+    --rule: #47443C;
+    --ink: #EDEAE0;
+    --body: #C5BFB1;
+    --muted: #938C7C;
+    --accent: #C4A183;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--body);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-block: 64px 96px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+
+  h1 {
+    font-family: 'Newsreader', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 6vw, 2.9rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 1.2rem;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .contactbox {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 24px;
+    margin: 40px 0 8px;
+  }
+
+  .contactbox p { margin: 0; }
+
+  .contactbox .label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .email {
+    font-family: 'Newsreader', Georgia, serif;
+    font-size: 1.45rem;
+    font-weight: 600;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .email a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+  .turnaround { font-size: 14px; color: var(--muted); margin-top: 12px !important; }
+
+  h2 {
+    font-family: 'Newsreader', Georgia, serif;
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin: 56px 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--ink);
+    margin: 30px 0 4px;
+  }
+
+  p { margin: 12px 0; }
+
+  ul { margin: 12px 0; padding-left: 20px; }
+  li { margin: 6px 0; }
+
+  strong { color: var(--ink); font-weight: 600; }
+
+  a { color: var(--accent); text-underline-offset: 2px; }
+
+  a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .path {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    margin-top: 64px;
+    padding-top: 24px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  footer a { color: var(--accent); }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">DailyByte</p>
+  <h1>Support</h1>
+  <p class="standfirst">Something not working, or a question the app doesn't answer? Write to me directly — DailyByte is made by one person, and that person reads every message.</p>
+
+  <div class="contactbox">
+    <p class="label">Get in touch</p>
+    <p class="email"><a href="mailto:adamianarshia@gmail.com">adamianarshia@gmail.com</a></p>
+    <p class="turnaround">Expect a reply within a few days. Including your iOS version and what you were doing when something went wrong makes it much faster to sort out.</p>
+  </div>
+
+  <h2>Common questions</h2>
+
+  <h3>My bytes aren't arriving as notifications</h3>
+  <p>First check that notifications are allowed: iOS <span class="path">Settings → DailyByte → Notifications</span>. If permission was declined when you first set up, iOS won't ask again, so it has to be switched on there.</p>
+  <p>Your bytes are still being generated either way — open the app and they'll be waiting on the Home and History tabs.</p>
+
+  <h3>How do I change my topic or my delivery times?</h3>
+  <p>Open <span class="path">Settings</span> in the app. You can change your topic, how many bytes you get each day, and the time each one arrives. Changes take effect from your next delivery, and your existing history stays where it is.</p>
+
+  <h3>Can I get more than three bytes a day?</h3>
+  <p>No — three is the deliberate maximum. The app is built around a small daily amount rather than a feed, and raising the ceiling would undo the thing that makes it work.</p>
+
+  <h3>A byte looked wrong to me</h3>
+  <p>Bytes are generated by AI and aren't reviewed by a person before they reach you, so mistakes are possible. Every byte carries a link to read further and check it yourself. If you spot something clearly wrong, send it over — it helps improve how bytes are written.</p>
+  <p>Bytes are for curiosity, not for medical, legal or financial decisions.</p>
+
+  <h3>How do I delete my account?</h3>
+  <p>In the app: <span class="path">Settings → Delete account</span>. It's immediate and permanent, and removes:</p>
+  <ul>
+    <li>Your account and sign-in details</li>
+    <li>Your email address, topic, schedule and time zone</li>
+    <li>Every byte generated for you</li>
+    <li>Your push token and all scheduled deliveries</li>
+  </ul>
+  <p>Nothing is kept afterwards, so there's no way to restore it. You're welcome to sign up again, but you'd be starting from scratch.</p>
+
+  <h3>I can't sign in</h3>
+  <p>If you signed up with an email address, use <strong>Forgot password</strong> on the sign-in screen to reset it. If you used Sign in with Apple or Google, use that same button — an account created that way has no password of its own.</p>
+  <p>Still stuck? Email me with the address you signed up with and I'll look into it.</p>
+
+  <h3>I never got my confirmation code</h3>
+  <p>Check your spam folder first. Codes can take a minute or two. If nothing arrives, tap <strong>Resend code</strong>, and get in touch if it still doesn't show up.</p>
+
+  <h3>What happens to my old bytes if I switch topic?</h3>
+  <p>They stay in your History. Switching topic only changes what gets generated from that point on.</p>
+
+  <h2>Reporting a problem</h2>
+  <p>Bug reports are genuinely welcome. The most useful ones say what you expected, what happened instead, and roughly when — that's usually enough to track it down.</p>
+
+  <footer>
+    DailyByte is an independent app. See also the <a href="https://claude.ai/artifact/AbCneBazDBuLYrArhBWnon">privacy policy</a>.
+  </footer>
+</div>
