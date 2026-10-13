@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAuth } from "../../context/AuthContext";
 
 // import onbaording screens
 import WelcomeScreen from './Welcome';
@@ -12,11 +13,30 @@ import SignUpScreen from './SignUp';
 export default function OnboardingFlow({ onSignInPress })
 {
     const [screen, setScreen] = useState('welcome');
+    const [err, setError] = useState(null)
+    const [creating, setCreating] = useState(false);
+
+    const {signUpAsGuest} = useAuth();
+
+    async function createGuestUser(){
+        if (creating) return; 
+        setCreating(true);
+        setError(null);
+
+        try {
+            await signUpAsGuest();
+        } catch (err) {
+            console.log("guest sign-up failed: ", err.message);
+            setError(err.message);
+            setCreating(false);
+        }
+    }
+
 
     if (screen === 'welcome')
     {
         return (
-            <WelcomeScreen onSignInPress={onSignInPress} onGetStarted={() => setScreen('signUp')} />
+            <WelcomeScreen onSignInPress={onSignInPress} onGetStarted={() => createGuestUser()} signUp={() => setScreen('signUp')}/> 
         );
     }
 

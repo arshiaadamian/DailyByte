@@ -5,7 +5,8 @@ import styles from '../style/Settings.styles';
 import { Daisy } from '../components/Mascot';
 import { FadeIn, PressableScale } from '../components/Motion';
 import { daisy } from '../assets/mascots';
-import { useAuth } from '../context/AuthContext';
+import { useAuth, isGuestEmail } from '../context/AuthContext';
+import SignUpScreen from './Onboarding/SignUp';
 import { useState, useEffect } from 'react';
 import { Dropdown } from 'react-native-element-dropdown';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -40,7 +41,7 @@ const ORDINALS = { 2: 'Second', 3: 'Third' };
 export default function SettingsScreen()
 {
 
-    const { signOut, user, getIdToken } = useAuth();
+    const { signOut, user, getIdToken, getEmail } = useAuth();
 
     const [error, setError] = useState(null);
     const [message, setMessage] = useState(null);
@@ -54,6 +55,7 @@ export default function SettingsScreen()
     const [deliveryTime, setDeliveryTime] = useState(null);
     const [activeSlot, setActiveSlot] = useState(null); // NEW: tracks which delivery-time picker is currently open (like Schedule.js)
     const [email, setEmail] = useState(null);
+    const [showSignUp, setShowSignUp] = useState(false);
 
     // NEW: byte slot numbers, and which ones are locked based on bytesPerDay.
     // Recomputed fresh on every render (same approach as Schedule.js) so it never goes stale.
@@ -202,6 +204,9 @@ export default function SettingsScreen()
                 setError(null);
                 const token = await getIdToken();
                 const data = await getUserInformation(token);
+                // Cognito is the source of truth for the email - the profile row keeps
+                // the guest address it was created with, even after the guest signs up
+                const tokenEmail = await getEmail();
                 // console.log(data);
 
                 if (!cancelled)
@@ -209,7 +214,7 @@ export default function SettingsScreen()
                     setTopic(data.message.topic);
                     setBytesPerDay(data.message.bytesPerDay);
                     setDeliveryTime(data.message.deliveryTime);
-                    setEmail(data.message.email)
+                    setEmail(tokenEmail ?? data.message.email)
                 }
             }
             catch (err)
@@ -251,6 +256,24 @@ export default function SettingsScreen()
             </View>
         );
     }
+
+    if (showSignUp)
+    {
+        return (
+            <SignUpScreen
+                upgradeGuest
+                onBack={() => setShowSignUp(false)}
+                onUpgraded={(newEmail) => {
+                    setEmail(newEmail);
+                    setShowSignUp(false);
+                    setError(null);
+                    setMessage("You're signed up. Use " + newEmail + " to sign in on other devices.");
+                }}
+            />
+        );
+    }
+
+    const isGuest = isGuestEmail(email);
 
     // CHANGED: only require a time for the slots that are actually unlocked (matches Schedule.js logic),
     // instead of requiring all 3 array entries to be filled in.
@@ -406,8 +429,23 @@ export default function SettingsScreen()
 
                 <View style={styles.card}>
                     <Text style={styles.label}>Signed in as</Text>
-                    <Text style={styles.value}>{email ?? '-'}</Text>
+                    <Text style={styles.value}>{isGuest ? 'Guest' : (email ?? '-')}</Text>
                 </View>
+                {isGuest && (
+                    <View style={styles.signUpArea}>
+                        <PressableScale
+                            onPress={() => setShowSignUp(true)}
+                            disabled={submitting || deleting}
+                            style={({ pressed }) => [
+                                styles.button,
+                                pressed && styles.buttonPressed,
+                                (submitting || deleting) && styles.buttonDisabled,
+                            ]}
+                        >
+                            <Text style={styles.buttonText}>Sign up with email</Text>
+                        </PressableScale>
+                    </View>
+                )}
                 <View style={styles.signOutArea}>
                     <PressableScale
                         onPress={handleSignOut}

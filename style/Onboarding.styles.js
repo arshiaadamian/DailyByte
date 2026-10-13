@@ -86,6 +86,15 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.inkSoft,
   },
+  // small print under the optional sign up link on the welcome screen
+  signUpHint: {
+    fontFamily: font.regular,
+    fontSize: 13,
+    lineHeight: 18,
+    color: colors.inkFaint,
+    textAlign: 'center',
+    marginTop: 4,
+  },
 
   // --- Step screens (topic / schedule / notification) ---
   scheduleTop: {
@@ -478,6 +487,7 @@ const styles = StyleSheet.create({
     fontFamily: font.regular,
     fontSize: 15,
     color: colors.brand,
+    textAlign: 'center',
   },
 });
 

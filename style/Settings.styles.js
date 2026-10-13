@@ -80,6 +80,9 @@ const styles = StyleSheet.create({
   signOutArea: {
     marginTop: 0,
   },
+  signUpArea: {
+    marginBottom: 12,
+  },
   // Outlined rather than filled, so deleting never competes with Sign out for
   // the eye - it should look like the deliberate, last-resort action it is.
   deleteArea: {

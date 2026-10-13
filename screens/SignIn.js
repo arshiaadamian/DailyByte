@@ -192,7 +192,7 @@ export default function SignInScreen({ onSignUpPress, onResetPress }) {
                         pressed && styles.resendButtonPressed,
                     ]}
                 >
-                    <Text style={styles.resendButtonText}>Don't have an account? Sign up</Text>
+                    <Text style={styles.resendButtonText}>Don't have an account? Get started</Text>
                     
                 </PressableScale>
                 <PressableScale

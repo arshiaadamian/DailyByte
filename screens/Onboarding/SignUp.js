@@ -12,9 +12,13 @@ import AppleLogo from '../../components/AppleLogo';
 // CHANGED: the preference props are gone. This screen creates the Cognito account
 // and nothing else - PreferencesFlow collects topic/schedule/notifications after
 // sign in and creates the DynamoDB row over POST /user.
-export default function SignUpScreen({ onSignInPress, onBack })
+// upgradeGuest: the user is already signed in as a guest, so instead of creating a
+// new account this swaps the guest email for theirs and sets their password. The
+// Cognito user (and its sub) stays the same, so their profile row and bytes carry over.
+export default function SignUpScreen({ onSignInPress, onBack, upgradeGuest = false, onUpgraded })
 {
-    const { signUp, confirmSignUp, resendCode, loginWithGoogle, loginWithApple } = useAuth();
+    const { signUp, confirmSignUp, resendCode, loginWithGoogle, loginWithApple,
+        startGuestUpgrade, resendGuestUpgradeCode, confirmGuestEmail, setGuestPassword } = useAuth();
 
     const [submitting, setSubmitting] = useState(false);
     const [email, setEmail] = useState('');
@@ -25,6 +29,7 @@ export default function SignUpScreen({ onSignInPress, onBack })
     const [showPassword, setShowPassword] = useState(false);
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [emailConfirmed, setEmailConfirmed] = useState(false);
 
     // CHANGED: signInWithRedirect hands off to the browser, so submitting has to stay
     // true past the call - the old finally cleared it the moment the browser opened.
@@ -56,6 +61,38 @@ export default function SignUpScreen({ onSignInPress, onBack })
             return;
         }
 
+        if (upgradeGuest)
+        {
+            try
+            {
+                setError(null);
+                setSubmitting(true);
+                // the email is already verified and only the password failed last time
+                if (emailConfirmed)
+                {
+                    await setGuestPassword(password);
+                    onUpgraded(email.trim());
+                    return;
+                }
+                await startGuestUpgrade(email.trim());
+                setSubmitting(false);
+                setDisplayCodeInput(true);
+            }
+            catch (err)
+            {
+                setSubmitting(false);
+                if (err.name === 'AliasExistsException')
+                {
+                    setError("That email is already registered to another account.");
+                }
+                else
+                {
+                    setError(err.message ?? "Could not sign up");
+                }
+            }
+            return;
+        }
+
         try
         {
             setError(null);
@@ -75,9 +112,18 @@ export default function SignUpScreen({ onSignInPress, onBack })
                     setDisplayCodeInput(true);
                     setError("A new code was sent, please check your email again");
                 }
-                catch (err)
+                catch (resendErr)
                 {
-                    setError("That email is already registered. Try signing in instead. err: " + err);
+                    // Cognito refuses to resend a code to an account that's already
+                    // confirmed - that's someone who should be signing in instead
+                    if (resendErr.name === 'InvalidParameterException')
+                    {
+                        setError("An account with this email already exists. Try signing in instead.");
+                    }
+                    else
+                    {
+                        setError(resendErr.message ?? "Could not send a new code");
+                    }
                 }
             }
             else
@@ -95,6 +141,35 @@ export default function SignUpScreen({ onSignInPress, onBack })
             setError('Please enter the confirmation code');
             return;
         }
+        if (upgradeGuest)
+        {
+            let confirmed = emailConfirmed;
+            try
+            {
+                setError(null);
+                setSubmitting(true);
+                if (!confirmed)
+                {
+                    await confirmGuestEmail(code.trim());
+                    confirmed = true;
+                    setEmailConfirmed(true);
+                }
+                await setGuestPassword(password);
+                onUpgraded(email.trim());
+            }
+            catch (err)
+            {
+                setSubmitting(false);
+                setError(err.message ?? 'Error with the confirmation code');
+                // the code went through, so the password is what needs fixing - send them back to it
+                if (confirmed)
+                {
+                    setDisplayCodeInput(false);
+                }
+            }
+            return;
+        }
+
         try
         {
             setError(null);
@@ -151,7 +226,14 @@ export default function SignUpScreen({ onSignInPress, onBack })
         {
             setError(null)
             setSubmitting(true);
-            await resendCode(email.trim());
+            if (upgradeGuest)
+            {
+                await resendGuestUpgradeCode();
+            }
+            else
+            {
+                await resendCode(email.trim());
+            }
             setSubmitting(false);
         }
         catch (err)
@@ -166,9 +248,11 @@ export default function SignUpScreen({ onSignInPress, onBack })
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
             <View style={styles.content}>
-                <View style={styles.progressTrack}>
-                    <View style={[styles.progressFill, { width: '95%' }]} />
-                </View>
+                {!upgradeGuest && (
+                    <View style={styles.progressTrack}>
+                        <View style={[styles.progressFill, { width: '95%' }]} />
+                    </View>
+                )}
                 {!displayCodeInput && (
                     <View>
                         <PressableScale
@@ -182,9 +266,11 @@ export default function SignUpScreen({ onSignInPress, onBack })
                         </PressableScale>
 
                         <FadeIn>
-                            <Text style={styles.stepEyebrow}>Last step</Text>
+                            <Text style={styles.stepEyebrow}>{upgradeGuest ? 'Keep your progress' : 'Last step'}</Text>
                             <Text style={styles.signUpHeading}>Sign up</Text>
-                            <Text style={styles.signUpSubheading}>Create your DailyByte account.</Text>
+                            <Text style={styles.signUpSubheading}>
+                                {upgradeGuest ? 'Add your email so you can sign in on any device.' : 'Create your DailyByte account.'}
+                            </Text>
                         </FadeIn>
 
                         {/* Label and Daisy share a row so the label stays put
@@ -204,6 +290,7 @@ export default function SignUpScreen({ onSignInPress, onBack })
                             style={styles.input}
                             value={email}
                             onChangeText={setEmail}
+                            editable={!emailConfirmed}
                             placeholder="you@example.com"
                             placeholderTextColor="#A39C8A"
                             autoCapitalize="none"
@@ -279,44 +366,50 @@ export default function SignUpScreen({ onSignInPress, onBack })
                         </PressableScale>
 
                         {/* CHANGED: Google sign up. Lands in the same signedIn state as a
-                            password signup, so App.js sends it through PreferencesFlow too. */}
-                        <PressableScale
-                            onPress={handleGoogleSignUp}
-                            disabled={submitting}
-                            style={({ pressed }) => [
-                                styles.button,
-                                styles.oauthButton,
-                                pressed && styles.buttonPressed,
-                                submitting && styles.buttonDisabled,
-                            ]}
-                        >
-                            <GoogleLogo size={18} style={styles.oauthLogo} />
-                            <Text style={styles.buttonText}>Continue with Google</Text>
-                        </PressableScale>
+                            password signup, so App.js sends it through PreferencesFlow too.
+                            Hidden when upgrading a guest - Google/Apple would create a separate
+                            user with a new sub instead of keeping the guest's. */}
+                        {!upgradeGuest && (
+                            <>
+                                <PressableScale
+                                    onPress={handleGoogleSignUp}
+                                    disabled={submitting}
+                                    style={({ pressed }) => [
+                                        styles.button,
+                                        styles.oauthButton,
+                                        pressed && styles.buttonPressed,
+                                        submitting && styles.buttonDisabled,
+                                    ]}
+                                >
+                                    <GoogleLogo size={18} style={styles.oauthLogo} />
+                                    <Text style={styles.buttonText}>Continue with Google</Text>
+                                </PressableScale>
 
-                        <PressableScale
-                            onPress={handleAppleSignUp}
-                            disabled={submitting}
-                            style={({ pressed }) => [
-                                styles.button,
-                                styles.oauthButton,
-                                pressed && styles.buttonPressed,
-                                submitting && styles.buttonDisabled,
-                            ]}
-                        >
-                            <AppleLogo size={18} style={styles.oauthLogo} />
-                            <Text style={styles.buttonText}>Continue with Apple</Text>
-                        </PressableScale>
+                                <PressableScale
+                                    onPress={handleAppleSignUp}
+                                    disabled={submitting}
+                                    style={({ pressed }) => [
+                                        styles.button,
+                                        styles.oauthButton,
+                                        pressed && styles.buttonPressed,
+                                        submitting && styles.buttonDisabled,
+                                    ]}
+                                >
+                                    <AppleLogo size={18} style={styles.oauthLogo} />
+                                    <Text style={styles.buttonText}>Continue with Apple</Text>
+                                </PressableScale>
 
-                        <PressableScale
-                            onPress={onSignInPress}
-                            style={({ pressed }) => [
-                                styles.resendButton,
-                                pressed && styles.resendButtonPressed,
-                            ]}
-                        >
-                            <Text style={styles.signUpLinkText}>Already have an account? Sign in</Text>
-                        </PressableScale>
+                                <PressableScale
+                                    onPress={onSignInPress}
+                                    style={({ pressed }) => [
+                                        styles.resendButton,
+                                        pressed && styles.resendButtonPressed,
+                                    ]}
+                                >
+                                    <Text style={styles.signUpLinkText}>Already have an account? Sign in</Text>
+                                </PressableScale>
+                            </>
+                        )}
                     </View>
                 )}
 

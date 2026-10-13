@@ -5,7 +5,7 @@ import { FadeIn, PressableScale } from '../../components/Motion';
 import { daisy } from '../../assets/mascots';
 
 
-export default function WelcomeScreen({ onSignInPress , onGetStarted})
+export default function WelcomeScreen({ onSignInPress , onGetStarted, signUp})
 {
     return (
         <KeyboardAvoidingView
@@ -39,6 +39,19 @@ export default function WelcomeScreen({ onSignInPress , onGetStarted})
                 >
                     <Text style={styles.primaryButtonText}>Get Started</Text>
                 </PressableScale>
+
+                <PressableScale
+                    onPress={signUp}
+                    scaleTo={0.98}
+                    style={({ pressed }) => [
+                        styles.resendButton,
+                        pressed && styles.resendButtonPressed,
+                    ]}
+                >
+                    <Text style={styles.signUpLinkText}>Would you like to sign up with your own email?</Text>
+                    <Text style={styles.signUpHint}>You don't have to but it allows you to save progress when switching devices.</Text>
+                </PressableScale>
+
                 <PressableScale
                     onPress={onSignInPress}
                     scaleTo={0.98}
